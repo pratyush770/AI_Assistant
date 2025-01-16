@@ -14,7 +14,7 @@ llm = HuggingFaceEndpoint(
 )
 
 
-def give_prompts(query):
+def generate_prompt(query):
     template = f"""
     Question: {query}
     Provide the most relevant and concise answer.
@@ -26,4 +26,4 @@ def give_prompts(query):
 
 
 if __name__ == "__main__":
-    print(give_prompts("What is gen ai"))
+    print(generate_prompt("What is gen ai"))
