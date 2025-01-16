@@ -1,29 +1,30 @@
-from secret_key import sec_key
-import os
-from langchain_huggingface import HuggingFaceEndpoint
-from langchain_core.prompts import PromptTemplate
-from langchain.schema.runnable import RunnableSequence
+from secret_key import sec_key  # secret_key used for api call
+import os  # for setting environment variable
+from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
+from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
+from langchain_groq import ChatGroq  # for using llm
 
-# sec_key = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-os.environ['HUGGINGFACEHUB_API_TOKEN'] = sec_key
+# sec_key = st.secrets["GROQ_API_KEY"]
+os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
 
-repo_id = "mistralai/Mistral-7B-Instruct-v0.2"
-llm = HuggingFaceEndpoint(
-    repo_id=repo_id, temperature=0.6,
-    model_kwargs={"max_length": 128, "token": sec_key}
+model_name = "mixtral-8x7b-32768"  # name of model used
+llm = ChatGroq(
+    model_name=model_name,
+    temperature=0.6,  # more accurate results
+    groq_api_key=sec_key
 )
 
 
-def generate_prompt(query):
-    template = f"""
+def generate_prompt(query):  # function to generate prompt
+    template = f"""  
     Question: {query}
     Provide the most relevant and concise answer.
     """
     prompt = PromptTemplate(template=template, input_variables=["query"])
     sequence = RunnableSequence(first=prompt, last=llm)
     response = sequence.invoke({"query": query})
-    return response
+    return response.content  # return only the content
 
 
 if __name__ == "__main__":
-    print(generate_prompt("What is gen ai"))
+    print(generate_prompt("What is gen ai"))  # for testing purposes

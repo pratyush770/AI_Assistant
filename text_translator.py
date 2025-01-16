@@ -1,33 +1,31 @@
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_ollama import OllamaLLM
-import streamlit as st
+from secret_key import sec_key  # secret_key used for api call
+import os  # for setting environment variable
+from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
+from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
+from langchain_groq import ChatGroq  # for using llm
 
-model = OllamaLLM(model="llama3.1:8b")
+# sec_key = st.secrets["GROQ_API_KEY"]
+os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
 
-template = "Translate the following into {language}"
-prompt = ChatPromptTemplate.from_messages(
-    [("system", template), ("user", "{text}")]
+model_name = "mixtral-8x7b-32768"  # name of model used
+llm = ChatGroq(
+    model_name=model_name,
+    temperature=0.6,  # more accurate results
+    groq_api_key=sec_key
 )
 
-parser = StrOutputParser()
 
-chain = prompt | model | parser
+def translate_text(query, target_lang):  # function to translate the text
+    template = f"""
+    Question: {query}
+    Translate the following text into {target_lang}.
+    Provide only the translated text and not any other information.
+    """
+    prompt = PromptTemplate(template=template, input_variables=["query", "target_lang"])
+    sequence = RunnableSequence(first=prompt, last=llm)
+    response = sequence.invoke({"query": query, "target_lang": target_lang})
+    return response.content  # return only the content
 
-st.title("Language Translator using Ollama")
 
-# Create input fields for users to type the text and the target translation language
-input_text = st.text_input("Type the Word or Sentence", "Hello")
-input_language = st.text_input("Translation Language", "Swedish")
-
-# Define a button that will trigger the translation process
-if st.button("Translate"):
-    try:
-        # Invoke the chain of prompt, model, and parser to generate the translated output
-        translated_output = chain.invoke({"language": input_language, "text": input_text})
-
-        # Display the translated output in the app
-        st.write("**Translated output:**", translated_output)
-    except Exception as e:
-        # Handle errors and display error message if translation fails
-        st.error(f"Error During Translation: {e}")
+if __name__ == "__main__":
+    print(translate_text("I like to watch anime", "Japanese"))  # for testing purposes
