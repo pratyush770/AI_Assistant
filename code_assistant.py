@@ -1,11 +1,12 @@
 from secret_key import sec_key  # secret_key used for api call
 import os  # for setting environment variable
+import streamlit as st
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
 from langchain_groq import ChatGroq  # for using llm
 from langchain.memory import ConversationBufferWindowMemory
 
-# sec_key = st.secrets["GROQ_API_KEY"]
+sec_key = st.secrets["GROQ_API_KEY"]
 os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
 memory = ConversationBufferWindowMemory(K=5)
 

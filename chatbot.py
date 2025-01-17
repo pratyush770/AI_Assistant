@@ -1,11 +1,12 @@
 from secret_key import sec_key  # secret_key used for api call
 import os  # for setting environment variable
+import streamlit as st
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
 from langchain_groq import ChatGroq  # for using llm
 from langchain.memory import ConversationBufferWindowMemory
 
-# sec_key = st.secrets["GROQ_API_KEY"]
+sec_key = st.secrets["GROQ_API_KEY"]
 os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
 memory = ConversationBufferWindowMemory(K=5)
 
@@ -24,15 +25,10 @@ def generate_prompt(query):  # function to generate prompt
     Conversation so far:
     {memory.load_memory_variables({})["history"]}
     """
-
-    # Use the prompt and pass it to the model
     prompt_template = PromptTemplate(template=template, input_variables=["query"])
     sequence = RunnableSequence(first=prompt_template, last=llm)
     response = sequence.invoke({"query": query})
-
-    # Save the response in memory
-    memory.save_context({"input": query}, {"output": response.content})
-
+    memory.save_context({"input": query}, {"output": response.content})    # save the response in memory
     return response.content  # return only the content
 
 

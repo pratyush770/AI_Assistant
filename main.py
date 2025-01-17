@@ -3,9 +3,10 @@ from chatbot import generate_prompt  # for generating prompt
 from text_translator import translate_text  # for translating text
 from code_assistant import code_assistant  # for code assistance
 from grammar_check import grammar_check  # for grammar check
+from exam_tutor import generate_question_and_answers  # for generating questions and answers
 
 st.title("Your personalized AI Assistant 🤖")  # for giving title to the app
-st.sidebar.title("Choose an option ⚙️")  # for giving sidebar title
+st.sidebar.title("Choose an option ✅")  # for giving sidebar title
 st.sidebar.write("")  # empty line
 st.sidebar.write("")
 st.sidebar.write("")
@@ -62,6 +63,11 @@ if st.sidebar.button("Grammar check"):
         reset_query()
     st.session_state.selected_option = "check"
 
+if st.sidebar.button("Exam tutor"):
+    if st.session_state.selected_option != "tutor":
+        reset_query()
+    st.session_state.selected_option = "tutor"
+
 # Handle the selected option
 if st.session_state.selected_option == "chatbot":  # for chatbot
     st.write("")
@@ -94,7 +100,7 @@ if st.session_state.selected_option == "translate":  # for text translation
 
 if st.session_state.selected_option == "code_assistant":  # for code assistant
     st.write("")
-    query = st.text_area("Enter your code snippet here", height=250)  # ask for user input
+    query = st.text_area("Enter your code snippet here", height=350)  # ask for user input
     query2 = st.text_input("Ask a question")
     if query and query2 and (
         query != st.session_state.query or query2 != st.session_state.query2
@@ -109,7 +115,7 @@ if st.session_state.selected_option == "code_assistant":  # for code assistant
 
 if st.session_state.selected_option == "check":  # for grammar check
     st.write("")
-    query = st.text_input("Enter text")  # ask for user input
+    query = st.text_input("Enter text to check for grammatical mistakes")  # ask for user input
     if query and query != st.session_state.query:
         st.session_state.query = query  # update session state
         with st.spinner("Generating response.."):
@@ -118,5 +124,14 @@ if st.session_state.selected_option == "check":  # for grammar check
     if st.session_state.response:
         st.write(st.session_state.response)  # display response
 
-
-
+if st.session_state.selected_option == "tutor":  # for generating questions and answers
+    st.write("")
+    query = st.text_area("Enter text to generate questions", height=400)  # ask for user input
+    if query and query != st.session_state.query:  # check if input has changed
+        st.session_state.query = query  # update session state
+        with st.spinner("Generating questions.."):
+            response = generate_question_and_answers(query)  # function call
+            st.session_state.response = response  # save response
+    if st.session_state.response:
+        formatted_response = response.replace("\n", "<br>")
+        st.markdown(formatted_response, unsafe_allow_html=True)  # display formatted response with line breaks
