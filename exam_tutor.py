@@ -4,11 +4,9 @@ import streamlit as st
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
 from langchain_groq import ChatGroq  # for using llm
-from langchain.memory import ConversationBufferWindowMemory
 
 sec_key = st.secrets["GROQ_API_KEY"]
 os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
-memory = ConversationBufferWindowMemory(K=5)
 
 model_name = "mixtral-8x7b-32768"  # name of model used
 llm = ChatGroq(
@@ -22,13 +20,10 @@ def generate_question_and_answers(query):  # function to generate prompt
     template = f"""  
     Question: {query}
     Generate questions based on the text and give answers to each questions too.
-    Conversation so far:
-    {memory.load_memory_variables({})["history"]}
     """
     prompt_template = PromptTemplate(template=template, input_variables=["query"])
     sequence = RunnableSequence(first=prompt_template, last=llm)
     response = sequence.invoke({"query": query})
-    memory.save_context({"input": query}, {"output": response.content})
     return response.content  # return only the content
 
 
