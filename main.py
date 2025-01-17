@@ -5,6 +5,11 @@ from code_assistant import code_assistant  # for code assistance
 from grammar_check import grammar_check  # for grammar check
 from exam_tutor import generate_question_and_answers  # for generating questions and answers
 
+st.set_page_config(  # set page configurations
+    page_title="AI Assistant",
+    page_icon='🤖',
+)
+
 st.title("Your personalized AI Assistant 🤖")  # for giving title to the app
 st.sidebar.title("Choose an option ✅")  # for giving sidebar title
 st.sidebar.write("")  # empty line
