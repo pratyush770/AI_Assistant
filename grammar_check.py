@@ -17,19 +17,18 @@ llm = ChatGroq(
 )
 
 
-def translate_text(query, target_lang):  # function to translate the text
-    template = f"""
+def grammar_check(query):  # function to check grammatical errors
+    template = f"""  
     Question: {query}
-    Translate the following text into {target_lang}.
-    Provide only the translated text and not any other information.
+    Check for grammatical errors and provide the most relevant an concise answer.
     Conversation so far:
     {memory.load_memory_variables({})["history"]}
     """
-    prompt = PromptTemplate(template=template, input_variables=["query", "target_lang"])
+    prompt = PromptTemplate(template=template, input_variables=["query"])
     sequence = RunnableSequence(first=prompt, last=llm)
-    response = sequence.invoke({"query": query, "target_lang": target_lang})
+    response = sequence.invoke({"query": query})
     return response.content  # return only the content
 
 
 if __name__ == "__main__":
-    print(translate_text("I like to watch anime", "Japanese"))  # for testing purposes
+    print(grammar_check("I is pratyush majumdar"))  # for testing purposes
