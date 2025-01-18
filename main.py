@@ -76,7 +76,7 @@ if st.sidebar.button("Exam tutor"):
 # Handle the selected option
 if st.session_state.selected_option == "chatbot":  # for chatbot
     st.write("")
-    query = st.text_input("Ask me anything")  # ask for user input
+    query = st.text_area("Ask me anything", height=300)  # ask for user input
     if query and query != st.session_state.query:  # check if input has changed
         st.session_state.query = query  # update session state
         with st.spinner("Generating response.."):
@@ -87,7 +87,7 @@ if st.session_state.selected_option == "chatbot":  # for chatbot
 
 if st.session_state.selected_option == "translate":  # for text translation
     st.write("")
-    query = st.text_input("Enter text")  # ask for user input
+    query = st.text_area("Enter text", height=300)  # ask for user input
     target_lang = st.selectbox(
         "Select a language",
         ("Select translation language",) + languages,
@@ -105,7 +105,7 @@ if st.session_state.selected_option == "translate":  # for text translation
 
 if st.session_state.selected_option == "code_assistant":  # for code assistant
     st.write("")
-    query = st.text_area("Enter your code snippet here", height=350)  # ask for user input
+    query = st.text_area("Enter your code snippet here", height=300)  # ask for user input
     query2 = st.text_input("Ask a question")
     if query and query2 and (
         query != st.session_state.query or query2 != st.session_state.query2
@@ -120,7 +120,7 @@ if st.session_state.selected_option == "code_assistant":  # for code assistant
 
 if st.session_state.selected_option == "check":  # for grammar check
     st.write("")
-    query = st.text_input("Enter text to check for grammatical mistakes")  # ask for user input
+    query = st.text_area("Enter text to check for grammatical mistakes", height=300)  # ask for user input
     if query and query != st.session_state.query:
         st.session_state.query = query  # update session state
         with st.spinner("Generating response.."):
@@ -131,7 +131,7 @@ if st.session_state.selected_option == "check":  # for grammar check
 
 if st.session_state.selected_option == "tutor":  # for generating questions and answers
     st.write("")
-    query = st.text_area("Enter text to generate questions", height=400)  # ask for user input
+    query = st.text_area("Enter text to generate questions", height=300)  # ask for user input
     if query and query != st.session_state.query:  # check if input has changed
         st.session_state.query = query  # update session state
         with st.spinner("Generating questions.."):
