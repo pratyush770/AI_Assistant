@@ -6,7 +6,11 @@ from langchain.schema.runnable import RunnableSequence  # for sequencing the flo
 from langchain_groq import ChatGroq  # for using llm
 
 sec_key = st.secrets["GROQ_API_KEY"]
+langsmith_sec_key = st.secrets['LANGCHAIN_API_KEY']
 os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
+os.environ['LANGCHAIN_API_KEY'] = langsmith_sec_key
+os.environ['LANGCHAIN_TRACING_V2'] = "true"  # to trace the output
+os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"  # project name
 
 model_name = "mixtral-8x7b-32768"  # name of model used
 llm = ChatGroq(
