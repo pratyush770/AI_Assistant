@@ -19,17 +19,25 @@ llm = ChatGroq(
     groq_api_key=sec_key
 )
 
+conversation_history = []  # initialize conversation history
+
 
 def generate_prompt(query):  # function to generate prompt
+    global conversation_history  # access the global conversation history
+    history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
     template = f"""  
-    Question: {query}
-    Provide the most relevant and concise answer.
+    {history}
+    User: {query}
+    AI: Provide the most relevant and concise answer.
     """
     prompt_template = PromptTemplate(template=template, input_variables=["query"])
     sequence = RunnableSequence(first=prompt_template, last=llm)
     response = sequence.invoke({"query": query})
-    return response.content  # return only the content
+    response_text = response.content.strip()
+    conversation_history.append((query, response_text))  # update conversation history
+    return response_text  # return only the content
 
 
 if __name__ == "__main__":
     print(generate_prompt("What is 5+5"))  # for testing purposes
+    print(generate_prompt("What is the square of that result?"))  # testing follow-up
