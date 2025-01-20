@@ -1,9 +1,9 @@
-# from secret_key import sec_key  # secret_key used for api call
+# from secret_key import sec_key  # secret_key used for API call
 import os  # for setting environment variable
 import streamlit as st
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
-from langchain_groq import ChatGroq  # for using llm
+from langchain_groq import ChatGroq  # for using LLM
 
 sec_key = st.secrets["GROQ_API_KEY"]
 langsmith_sec_key = st.secrets['LANGCHAIN_API_KEY']
@@ -21,7 +21,7 @@ llm = ChatGroq(
 
 
 def code_assistant(code_snippet, reason):  # function for code assistance
-    template = f"""  
+    template = """  
     Code Snippet: {code_snippet}
     Question: {reason}
     Provide the most relevant and concise answer for the issue with the code snippet.
