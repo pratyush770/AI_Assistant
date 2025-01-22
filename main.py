@@ -4,6 +4,7 @@ from text_translator import translate_text  # for translating text
 from code_assistant import code_assistant  # for code assistance
 from grammar_check import grammar_check  # for grammar check
 from exam_tutor import generate_question_and_answers  # for generating questions and answers
+from langchain_core.messages import AIMessage, HumanMessage
 
 st.set_page_config(  # set page configurations
     page_title="AI Assistant",
@@ -73,21 +74,35 @@ if st.sidebar.button("Exam tutor"):
         reset_query()
     st.session_state.selected_option = "tutor"
 
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = [
+        AIMessage(content="Hello, how are you?")
+    ]
+
 # Handle the selected option
 if st.session_state.selected_option == "chatbot":  # for chatbot
     st.write("")
-    query = st.text_area("Ask me anything", height=300)  # ask for user input
-    if query and query != st.session_state.query:  # check if input has changed
-        st.session_state.query = query  # update session state
-        with st.spinner("Generating response.."):
-            response = generate_prompt(query)  # function call
-            st.session_state.response = response  # save response
-    if st.session_state.response:
-        st.write(st.session_state.response)  # display response
+    for message in st.session_state.chat_history:   # display chat history
+        if isinstance(message, AIMessage):
+            with st.chat_message("AI"):
+                st.markdown(message.content)
+        elif isinstance(message, HumanMessage):
+            with st.chat_message("Human"):
+                st.markdown(message.content)
+    query = st.chat_input("Ask me anything")  # ask for user input
+    if query and query.strip() != "":  # check if the input is valid
+        st.session_state.chat_history.append(HumanMessage(content=query))
+        with st.chat_message("Human"):
+            st.markdown(query)  # display human message
+        with st.chat_message("AI"):
+            with st.spinner("Generating response..."):
+                response = generate_prompt(query)  # call the function to generate response
+                st.markdown(response)  # display ai message
+            st.session_state.chat_history.append(AIMessage(content=response))
 
 if st.session_state.selected_option == "translate":  # for text translation
     st.write("")
-    query = st.text_area("Enter text", height=300)  # ask for user input
+    query = st.text_input("Enter text")  # ask for user input
     target_lang = st.selectbox(
         "Select a language",
         ("Select translation language",) + languages,
@@ -105,7 +120,7 @@ if st.session_state.selected_option == "translate":  # for text translation
 
 if st.session_state.selected_option == "code_assistant":  # for code assistant
     st.write("")
-    query = st.text_area("Enter your code snippet here", height=300)  # ask for user input
+    query = st.text_area("Enter your code snippet here", height=250)  # ask for user input
     query2 = st.text_input("Ask a question")
     if query and query2 and (
         query != st.session_state.query or query2 != st.session_state.query2
@@ -120,7 +135,7 @@ if st.session_state.selected_option == "code_assistant":  # for code assistant
 
 if st.session_state.selected_option == "check":  # for grammar check
     st.write("")
-    query = st.text_area("Enter text to check for grammatical mistakes", height=300)  # ask for user input
+    query = st.text_input("Enter text to check for grammatical mistakes")  # ask for user input
     if query and query != st.session_state.query:
         st.session_state.query = query  # update session state
         with st.spinner("Generating response.."):
@@ -131,7 +146,7 @@ if st.session_state.selected_option == "check":  # for grammar check
 
 if st.session_state.selected_option == "tutor":  # for generating questions and answers
     st.write("")
-    query = st.text_area("Enter text to generate questions", height=300)  # ask for user input
+    query = st.text_input("Enter text to generate questions")  # ask for user input
     if query and query != st.session_state.query:  # check if input has changed
         st.session_state.query = query  # update session state
         with st.spinner("Generating questions.."):
