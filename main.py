@@ -76,7 +76,7 @@ if st.sidebar.button("Exam tutor"):
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
-        AIMessage(content="Hello, how are you?")
+        AIMessage(content="Hello, how can i help you?")
     ]
 
 # Handle the selected option
