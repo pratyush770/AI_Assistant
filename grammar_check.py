@@ -19,16 +19,23 @@ llm = ChatGroq(
     groq_api_key=sec_key
 )
 
+conversation_history = []  # initialize conversation history
+
 
 def grammar_check(query):  # function to check grammatical errors
+    global conversation_history  # access the global conversation history
+    history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
     template = f"""  
-    Question: {query}
-    Check for grammatical errors and provide the most relevant and concise answer.
+    {history}
+    User: {query}
+    AI: Check for grammatical errors and provide the most relevant and concise answer.
     """
     prompt = PromptTemplate(template=template, input_variables=["query"])
     sequence = RunnableSequence(first=prompt, last=llm)
     response = sequence.invoke({"query": query})
-    return response.content  # return only the content
+    response_text = response.content.strip()
+    conversation_history.append((query, response_text))  # update conversation history
+    return response_text  # return only the content
 
 
 if __name__ == "__main__":

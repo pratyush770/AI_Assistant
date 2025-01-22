@@ -1,4 +1,4 @@
-# from secret_key import sec_key  # secret_key used for api call
+from secret_key import sec_key  # secret_key used for api call
 import os  # for setting environment variable
 import streamlit as st
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
