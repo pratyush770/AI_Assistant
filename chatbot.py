@@ -1,8 +1,7 @@
 # from secret_key import sec_key  # secret_key used for api call
-import os  # for setting environment variable
 import streamlit as st
+import os  # for setting environment variable
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
-from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
 from langchain_groq import ChatGroq  # for using llm
 
 sec_key = st.secrets["GROQ_API_KEY"]
@@ -29,17 +28,18 @@ def generate_prompt(query):  # function to generate prompt
     gratitude_keywords = ["thanks", "thank you", "thx", "appreciate", "grateful"]
     if any(word in query.lower() for word in gratitude_keywords):
         return "You're welcome! Let me know if you need anything else."
-    template = f"""  
+    template = """  
     {history}
     User: {query}
     AI: Provide the most relevant and concise answer.
     """
-    prompt_template = PromptTemplate(template=template, input_variables=["query"])
-    sequence = RunnableSequence(first=prompt_template, last=llm)
-    response = sequence.invoke({"query": query})
+    prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
+    sequence = prompt_template | llm  
+    response = sequence.invoke({"history": history, "query": query})
     response_text = response.content.strip()
     conversation_history.append((query, response_text))  # update conversation history
     return response_text  # return only the content
+
 
 
 if __name__ == "__main__":

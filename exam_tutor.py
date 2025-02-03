@@ -2,7 +2,6 @@
 import os  # for setting environment variable
 import streamlit as st
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
-from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
 from langchain_groq import ChatGroq  # for using llm
 
 sec_key = st.secrets["GROQ_API_KEY"]
@@ -25,14 +24,14 @@ conversation_history = []  # initialize conversation history
 def generate_question_and_answers(query):  # function to generate prompt
     global conversation_history  # access the global conversation history
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
-    template = f"""  
+    template = """  
     {history}
     User: {query}
-    AI: Generate questions based on the text and give answers to each questions too.
+    AI: Generate questions based on the text and provide answers to each question.
     """
-    prompt_template = PromptTemplate(template=template, input_variables=["query"])
-    sequence = RunnableSequence(first=prompt_template, last=llm)
-    response = sequence.invoke({"query": query})
+    prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
+    sequence = prompt_template | llm
+    response = sequence.invoke({"history": history, "query": query})
     response_text = response.content.strip()
     conversation_history.append((query, response_text))  # update conversation history
     return response_text  # return only the content
@@ -48,4 +47,3 @@ if __name__ == "__main__":
     Machine learning is fundamentally built upon data, which serves as the foundation for training and testing models. Data consists of inputs (features) and outputs (labels). A model learns patterns during training and is tested on unseen data to evaluate its performance and generalization. In order to make predictions, there are essential steps through which data passes in order to produce a machine learning model that can make predictions.
     """
     print(generate_question_and_answers(question))  # for testing purposes
-
