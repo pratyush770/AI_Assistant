@@ -15,7 +15,8 @@
 ## Technologies Used  
 - **Python**: Core programming language for the application.
   
-- **Langchain**: Advanced language processing for generating names and menu items.  
+- **Langchain**: Framework for building applications with large language models (LLMs), enabling reasoning, memory, and tool integration.
+- **Langsmith**: Platform for debugging, testing, monitoring, and improving LLM-powered applications.
 - **Streamlit**: Framework for deploying the web application.
 ## How to Deploy
 - Clone the repository by the following command: `git clone https://github.com/pratyush770/AI_Assistant.git`
