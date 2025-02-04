@@ -21,7 +21,7 @@
 ## How to Deploy
 - Clone the repository by the following command: `git clone https://github.com/pratyush770/AI_Assistant.git`
   
-- Create a **virtual environment** (venv) first and install all the packages using `pip install requriements.txt`.
+- Create a **virtual environment** (venv) first and install all the packages using `pip install requirements.txt`.
 - Create your **GroqCloud** account by visiting the following link: https://console.groq.com
 - Click on the **API Keys** section and generate an API key by giving a name to it.
 - Create a secret_key.py file and add `sec_key = "Your generated secret key"`.
