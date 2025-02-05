@@ -28,7 +28,7 @@
 - Create your **Langsmith** account by visiting the following link: https://www.langchain.com/langsmith
 - Click on the **Settings** section and generate an API key by giving a description to it.
 - In the secret_key.py add `langsmith_sec_key = "Your generated secret key"`.
-- Create a github repository and make sure to add secret_key.py in .gitignore for security reasons.
+- Create a github repository and make sure to add **secret_key.py** in .gitignore for security reasons.
 - Create your **Streamlit** account by visiting the following link: https://streamlit.io/cloud
 - Click on **Create app** button on the top right and then select **Deploy a public app from Github**.
 - Select your **created repository, branch, main file path** and give **app url** if needed.
