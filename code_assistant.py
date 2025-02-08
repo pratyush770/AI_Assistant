@@ -21,22 +21,21 @@ llm = ChatGroq(
 conversation_history = []  # initialize conversation history
 
 
-def code_assistant(code_snippet, reason):  # function for code assistance
+def code_assistant(code_snippet):  # function for code assistance
     global conversation_history
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
     template = f"""
     {history}
     Code Snippet: {code_snippet}
-    Question: {reason}
     Provide the most relevant and concise answer for the issue with the code snippet.
     """
-    prompt_template = PromptTemplate(template=template, input_variables=["history", "code_snippet", "reason"])
+    prompt_template = PromptTemplate(template=template, input_variables=["history", "code_snippet"])
     sequence = prompt_template | llm
-    response = sequence.invoke({"history": history, "code_snippet": code_snippet, "reason": reason})
+    response = sequence.invoke({"history": history, "code_snippet": code_snippet})
     response_text = response.content.strip()
-    conversation_history.append((reason, response_text))
+    conversation_history.append((code_snippet, response_text))
     return response_text  # return only the content
 
 
 if __name__ == "__main__":
-    print(code_assistant("print(10+", "Why is it not working properly?"))  # for testing purposes
+    print(code_assistant("print(10+"))  # for testing purposes
