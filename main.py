@@ -121,14 +121,10 @@ if st.session_state.selected_option == "translate":  # for text translation
 if st.session_state.selected_option == "code_assistant":  # for code assistant
     st.write("")
     query = st.text_area("Enter your code snippet here", height=250)  # ask for user input
-    query2 = st.text_input("Ask a question")
-    if query and query2 and (
-        query != st.session_state.query or query2 != st.session_state.query2
-    ):
+    if query and query != st.session_state.query:
         st.session_state.query = query
-        st.session_state.query2 = query2
         with st.spinner("Generating response.."):
-            response = code_assistant(query, query2)  # function call
+            response = code_assistant(query)  # function call
             st.session_state.response = response  # save response
     if st.session_state.response:
         st.write(st.session_state.response)  # display response
