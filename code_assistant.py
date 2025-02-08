@@ -24,7 +24,7 @@ conversation_history = []  # initialize conversation history
 def code_assistant(code_snippet):  # function for code assistance
     global conversation_history
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
-    template = f"""
+    template = """
     {history}
     Code Snippet: {code_snippet}
     Provide the most relevant and concise answer for the issue with the code snippet.
