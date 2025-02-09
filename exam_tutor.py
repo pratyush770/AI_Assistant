@@ -25,6 +25,9 @@ conversation_history = []  # initialize conversation history
 def generate_question_and_answers(query):  # function to generate prompt
     global conversation_history  # access the global conversation history
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
+    gratitude_keywords = ["thanks", "thank you", "thx", "appreciate it", "ty", "okay thanks", "thnx", "okay thank you"]
+    if any(word in query.lower() for word in gratitude_keywords):
+        return "You're welcome! Let me know if you need anything else."
     template = """  
     {history}
     User: {query}
