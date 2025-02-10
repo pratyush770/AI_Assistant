@@ -2,7 +2,6 @@ import streamlit as st  # for ui generation
 from chatbot import generate_prompt  # for generating prompt
 from text_translator import translate_text  # for translating text
 from code_assistant import code_assistant  # for code assistance
-from grammar_check import grammar_check  # for grammar check
 from exam_tutor import generate_question_and_answers  # for generating questions and answers
 from langchain_core.messages import AIMessage, HumanMessage
 
@@ -34,8 +33,6 @@ if "selected_option" not in st.session_state:
     st.session_state.selected_option = None
 if "query" not in st.session_state:
     st.session_state.query = ""  # default state
-if "query2" not in st.session_state:
-    st.session_state.query2 = ""  # default state
 if "target_lang" not in st.session_state:
     st.session_state.target_lang = ""
 if "response" not in st.session_state:
@@ -44,7 +41,6 @@ if "response" not in st.session_state:
 
 def reset_query():  # Function to reset the queries and response when switching options
     st.session_state.query = ""
-    st.session_state.query2 = ""
     st.session_state.response = ""
 
 
@@ -63,11 +59,6 @@ if st.sidebar.button("Code assistant"):
     if st.session_state.selected_option != "code_assistant":
         reset_query()
     st.session_state.selected_option = "code_assistant"
-
-if st.sidebar.button("Grammar check"):
-    if st.session_state.selected_option != "check":
-        reset_query()
-    st.session_state.selected_option = "check"
 
 if st.sidebar.button("Exam tutor"):
     if st.session_state.selected_option != "tutor":
@@ -125,17 +116,6 @@ if st.session_state.selected_option == "code_assistant":  # for code assistant
         st.session_state.query = query
         with st.spinner("Generating response.."):
             response = code_assistant(query)  # function call
-            st.session_state.response = response  # save response
-    if st.session_state.response:
-        st.write(st.session_state.response)  # display response
-
-if st.session_state.selected_option == "check":  # for grammar check
-    st.write("")
-    query = st.text_input("Enter text to check for grammatical mistakes")  # ask for user input
-    if query and query != st.session_state.query:
-        st.session_state.query = query  # update session state
-        with st.spinner("Generating response.."):
-            response = grammar_check(query)  # function call
             st.session_state.response = response  # save response
     if st.session_state.response:
         st.write(st.session_state.response)  # display response
