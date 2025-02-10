@@ -24,9 +24,6 @@ conversation_history = []  # initialize conversation history
 def code_assistant(code_snippet):  # function for code assistance
     global conversation_history
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
-    gratitude_keywords = ["thanks", "thank you", "thx", "appreciate it", "ty", "okay thanks", "thnx", "okay thank you"]
-    if any(word in code_snippet.lower() for word in gratitude_keywords):
-        return "You're welcome! Let me know if you need anything else."
     template = """
     {history}
     Code Snippet: {code_snippet}
