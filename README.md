@@ -9,7 +9,7 @@
 3. **Code Assistant**  
    Get help with coding tasks, including writing, debugging, and explaining code in various programming languages.
 4. **Exam Tutor**  
-   Prepare for exams with personalized tutoring. The AI can help you with practice questions, explanations, and study strategies.
+   Prepare for exams with personalized tutoring. The AI can help you with practice questions and explanations.
 ## Technologies Used  
 - **Python**: Core programming language for the application.
   
