@@ -3,6 +3,7 @@ from chatbot import generate_prompt  # for generating prompt
 from text_translator import translate_text  # for translating text
 from code_assistant import code_assistant  # for code assistance
 from exam_tutor import generate_question_and_answers  # for generating questions and answers
+from grammar_check import grammar_check  # for grammar check
 from langchain_core.messages import AIMessage, HumanMessage
 
 st.set_page_config(  # set page configurations
@@ -60,6 +61,11 @@ if st.sidebar.button("Code assistant"):
         reset_query()
     st.session_state.selected_option = "code_assistant"
 
+if st.sidebar.button("Grammar check"):
+    if st.session_state.selected_option != "check":
+        reset_query()
+    st.session_state.selected_option = "check"
+
 if st.sidebar.button("Exam tutor"):
     if st.session_state.selected_option != "tutor":
         reset_query()
@@ -116,6 +122,17 @@ if st.session_state.selected_option == "code_assistant":  # for code assistant
         st.session_state.query = query
         with st.spinner("Generating response.."):
             response = code_assistant(query)  # function call
+            st.session_state.response = response  # save response
+    if st.session_state.response:
+        st.write(st.session_state.response)  # display response
+
+if st.session_state.selected_option == "check":  # for grammar check
+    st.write("")
+    query = st.text_input("Enter text to check for grammatical mistakes")  # ask for user input
+    if query and query != st.session_state.query:
+        st.session_state.query = query  # update session state
+        with st.spinner("Generating response.."):
+            response = grammar_check(query)  # function call
             st.session_state.response = response  # save response
     if st.session_state.response:
         st.write(st.session_state.response)  # display response

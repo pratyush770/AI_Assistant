@@ -12,7 +12,7 @@ os.environ['LANGCHAIN_API_KEY'] = langsmith_sec_key
 os.environ['LANGCHAIN_TRACING_V2'] = "true"  # to trace the output
 os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"  # project name
 
-model_name = "mixtral-8x7b-32768"  # name of model used
+model_name = "gemma2-9b-it"  # name of model used
 llm = ChatGroq(
     model_name=model_name,
     temperature=0.6,  # more accurate results
@@ -28,10 +28,10 @@ def generate_question_and_answers(query):  # function to generate prompt
     template = """  
     {history}
     User: {query}
-    AI: Generate questions based on the text and provide answers to each question. Provide only questions and answers. 
+    AI: Generate questions based on the text and provide answers to each question. Provide only questions and answers. Provide at least 10 questions and answers.
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
-    sequence = RunnableSequence(first=prompt_template, last=llm)
+    sequence = prompt_template | llm
     response = sequence.invoke({"history": history, "query": query})
     response_text = response.content.strip()
     conversation_history.append((query, response_text))  # update conversation history
