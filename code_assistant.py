@@ -11,7 +11,7 @@ os.environ['LANGCHAIN_API_KEY'] = langsmith_sec_key
 os.environ['LANGCHAIN_TRACING_V2'] = "true"
 os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
 
-model_name = "mixtral-8x7b-32768"
+model_name = "gemma2-9b-it"
 llm = ChatGroq(
     model_name=model_name,
     temperature=0.6,
