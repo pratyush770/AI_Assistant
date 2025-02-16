@@ -5,6 +5,7 @@ from code_assistant import code_assistant  # for code assistance
 from exam_tutor import generate_question_and_answers  # for generating questions and answers
 from grammar_check import grammar_check  # for grammar check
 from langchain_core.messages import AIMessage, HumanMessage
+import time
 
 st.set_page_config(  # set page configurations
     page_title="AI Assistant",
@@ -92,10 +93,25 @@ if st.session_state.selected_option == "chatbot":  # for chatbot
         with st.chat_message("Human"):
             st.markdown(query)  # display human message
         with st.chat_message("AI"):
-            with st.spinner("Generating response..."):
-                response = generate_prompt(query)  # call the function to generate response
-                st.markdown(response)  # display ai message
+            response = generate_prompt(query)  # generate response
             st.session_state.chat_history.append(AIMessage(content=response))
+            message_placeholder = st.empty()  # create a placeholder for dynamic updates
+            if "```" in response:
+                time.sleep(0.1)   # delay of 1 second
+                message_placeholder.empty()  # clear placeholder
+                code_blocks = response.split("```")  # extract code blocks
+                for i, block in enumerate(code_blocks):
+                    block = block.strip()
+                    if i % 2 == 1:  # code blocks (odd indices)
+                        st.code(block)
+                    elif block:  # normal text (even indices)
+                        message_placeholder.markdown(block)
+            else:
+                displayed_text = ""  # word-by-word rendering
+                for word in response.split():
+                    displayed_text += word + " "
+                    message_placeholder.markdown(displayed_text)  # updates the text dynamically
+                    time.sleep(0.1)  # delay to create a typing effect
 
 if st.session_state.selected_option == "translate":  # for text translation
     st.write("")
