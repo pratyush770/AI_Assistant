@@ -146,4 +146,4 @@ if st.session_state.selected_option == "tutor":  # for generating questions and 
             st.session_state.response = response  # save response
     if st.session_state.response:
         formatted_response = response.replace("\n", "<br>")
-        st.markdown(formatted_response, unsafe_allow_html=True)  # display formatted response with line breaks
+        st.write(formatted_response, unsafe_allow_html=True)  # display formatted response with line breaks
