@@ -105,12 +105,12 @@ if st.session_state.selected_option == "chatbot":  # for chatbot
                     if i % 2 == 1:  # code blocks (odd indices)
                         st.code(block)
                     elif block:  # normal text (even indices)
-                        message_placeholder.markdown(block)
+                        message_placeholder.write(block)
             else:
                 displayed_text = ""  # word-by-word rendering
                 for word in response.split():
                     displayed_text += word + " "
-                    message_placeholder.markdown(displayed_text)  # updates the text dynamically
+                    message_placeholder.write(displayed_text)  # updates the text dynamically
                     time.sleep(0.1)  # delay to create a typing effect
 
 if st.session_state.selected_option == "translate":  # for text translation
