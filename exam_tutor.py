@@ -15,20 +15,23 @@ os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"  # project name
 model_name = "qwen-2.5-32b"  # name of model used
 llm = ChatGroq(
     model_name=model_name,
-    temperature=0.6,  # more accurate results
-    groq_api_key=sec_key,
+    temperature=0.3,  # more accurate results
+    groq_api_key=sec_key
 )
 
 conversation_history = []  # initialize conversation history
 
 
+@st.cache_data(show_spinner=False)
 def generate_question_and_answers(query):  # function to generate prompt
     global conversation_history  # access the global conversation history
+    MAX_HISTORY = 3
+    conversation_history = conversation_history[-MAX_HISTORY:]  # keep only the last 3 exchanges to reduce token usage
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
     template = """  
     {history}
     User: {query}
-    AI: Generate questions based on the text and provide answers to each question. Provide only questions and answers. Provide at least 10 questions and answers.
+    AI: Generate at least 10 questions and answers based on the text. Only return Q&A pairs.
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     sequence = prompt_template | llm
