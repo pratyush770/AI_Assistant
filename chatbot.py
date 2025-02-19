@@ -14,15 +14,18 @@ os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"  # project name
 model_name = "qwen-2.5-32b"  # name of model used
 llm = ChatGroq(
     model_name=model_name,
-    temperature=0.6,  # more accurate results
+    temperature=0.3,  # more accurate results
     groq_api_key=sec_key
 )
 
 conversation_history = []  # initialize conversation history
 
 
+@st.cache_data(show_spinner=False)
 def generate_prompt(query):  # function to generate prompt
     global conversation_history  # access the global conversation history
+    MAX_HISTORY = 3
+    conversation_history = conversation_history[-MAX_HISTORY:]  # keep only the last 3 exchanges to reduce token usage
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
     # Check if the user is expressing gratitude
     gratitude_keywords = ["thanks", "thank you", "thx", "appreciate it", "ty", "okay thanks", "thnx", "okay thank you"]
