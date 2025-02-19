@@ -11,7 +11,7 @@ os.environ['LANGCHAIN_API_KEY'] = langsmith_sec_key
 os.environ['LANGCHAIN_TRACING_V2'] = "true"  # to trace the output
 os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"  # project name
 
-model_name = "gemma2-9b-it"  # name of model used
+model_name = "qwen-2.5-32b"  # name of model used
 llm = ChatGroq(
     model_name=model_name,
     temperature=0.6,  # more accurate results
