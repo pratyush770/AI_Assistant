@@ -3,7 +3,6 @@ import os  # for setting environment variable
 import streamlit as st
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from langchain_groq import ChatGroq  # for using llm
-from langchain.schema.runnable import RunnableSequence  # for sequencing the flow
 
 sec_key = st.secrets["GROQ_API_KEY"]
 langsmith_sec_key = st.secrets['LANGCHAIN_API_KEY']
@@ -31,7 +30,7 @@ def generate_question_and_answers(query):  # function to generate prompt
     template = """  
     {history}
     User: {query}
-    AI: Generate at least 10 questions and answers based on the text. Only return Q&A pairs.
+    AI: Generate at least 10 questions and answers based on the text. Only return Q1&A1 pairs.
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     sequence = prompt_template | llm
