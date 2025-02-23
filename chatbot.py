@@ -28,7 +28,7 @@ def generate_prompt(query):  # function to generate prompt
     conversation_history = conversation_history[-MAX_HISTORY:]  # keep only the last 3 exchanges to reduce token usage
     history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
     polite_messages = {"thanks", "thank you", "thx", "appreciate it", "ty", "okay thanks", "thnx", "okay thank you"}
-    if query in polite_messages:
+    if query.lower() in polite_messages:
         return "You're welcome! Let me know if you need anything else."
     template = """  
     {history}
