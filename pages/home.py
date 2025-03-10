@@ -1,9 +1,9 @@
 import streamlit as st  # for ui generation
-from chatbot import generate_prompt  # for generating prompt
-from text_translator import translate_text  # for translating text
-from code_assistant import code_assistant  # for code assistance
-from exam_tutor import generate_question_and_answers  # for generating questions and answers
-from grammar_check import grammar_check  # for grammar check
+from functions.chatbot import generate_prompt  # for generating prompt
+from functions.text_translator import translate_text  # for translating text
+from functions.code_assistant import code_assistant  # for code assistance
+from functions.exam_tutor import generate_question_and_answers  # for generating questions and answers
+from functions.grammar_check import grammar_check  # for grammar check
 from langchain_core.messages import AIMessage, HumanMessage
 
 st.set_page_config(  # set page configurations
@@ -76,7 +76,7 @@ if "chat_history" not in st.session_state:
         AIMessage(content="Hello, how can i help you?")
     ]
 
-# Handle the selected option
+# handle the selected option
 if st.session_state.selected_option == "chatbot":  # for chatbot
     st.write("")
     for message in st.session_state.chat_history:   # display chat history
