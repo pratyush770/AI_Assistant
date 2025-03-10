@@ -39,4 +39,4 @@
     
 ## Deployment  
 The application is deployed on **Streamlit** and is accessible via the following link:  
-[Live Demo] https://ai-assistant-python.streamlit.app/
+[Live Demo] https://your-ai-assistant.streamlit.app/
