@@ -1,7 +1,9 @@
 import pyrebase
 import streamlit as st
-from secret_key import firebaseConfig
+# from secret_key import firebaseConfig
 import time
+
+firebaseConfig = st.secrets["FIREBASE_CONFIG"]
 
 st.set_page_config(page_title="AI Assistant", page_icon='🤖')
 
