@@ -1,8 +1,8 @@
 # from secret_key import sec_key  # secret_key used for API call
-import os  # for setting environment variable
 import streamlit as st
+import os  # for setting environment variable
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
-from langchain_groq import ChatGroq  # for using LLM
+from groq import Groq  # for using LLM
 
 sec_key = st.secrets["GROQ_API_KEY"]
 langsmith_sec_key = st.secrets['LANGCHAIN_API_KEY']
@@ -11,17 +11,10 @@ os.environ['LANGCHAIN_API_KEY'] = langsmith_sec_key
 os.environ['LANGCHAIN_TRACING_V2'] = "true"
 os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
 
-model_name = "qwen-2.5-32b"  # name of model used
-llm = ChatGroq(
-    model_name=model_name,
-    temperature=0.3,  # more accurate results
-    groq_api_key=sec_key,
-)
-
-conversation_history = []  # initialize conversation history
+client = Groq(api_key=sec_key)  # initialize the groq client
+conversation_history = []  # store conversation history
 
 
-@st.cache_data(show_spinner=False)
 def translate_text(query, target_lang):  # function to translate the text
     global conversation_history  # access the global conversation history
     MAX_HISTORY = 3
@@ -35,12 +28,21 @@ def translate_text(query, target_lang):  # function to translate the text
     """
 
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query", "target_lang"])
-    sequence = prompt_template | llm
-    response = sequence.invoke({"history": history, "query": query, "target_lang": target_lang})
-    response_text = response.content.strip()
+    final_prompt = prompt_template.format(history=history, query=query, target_lang=target_lang)
+    # call the groq llm api
+    response = client.chat.completions.create(
+        model="qwen-2.5-32b",
+        messages=[{"role": "system", "content": final_prompt}],
+        temperature=0,
+        max_tokens=1024,
+        top_p=0,
+        stop=None
+    )
+    response_text = response.choices[0].message.content.strip()
     conversation_history.append((query, response_text))  # update conversation history
-    return response_text  # return only the content
+    return response_text
 
 
 if __name__ == "__main__":
     print(translate_text("I like to watch anime", "Japanese"))  # for testing purposes
+
