@@ -32,7 +32,7 @@ def translate_text(query, target_lang):  # function to translate the text
     final_prompt = prompt_template.format(history=history, query=query, target_lang=target_lang)
     # call the groq llm api
     response = client.chat.completions.create(
-        model="qwen-qwq-32b",
+        model="gemma2-9b-it",
         messages=[{"role": "system", "content": final_prompt}],
         temperature=0,
         max_tokens=1024,
