@@ -3,6 +3,7 @@ import streamlit as st
 import os  # for setting environment variable
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from groq import Groq  # for using LLM
+import re
 
 sec_key = st.secrets["GROQ_API_KEY"]
 langsmith_sec_key = st.secrets['LANGCHAIN_API_KEY']
@@ -26,13 +27,13 @@ def generate_prompt(query):
     template = """  
     {history}
     User: {query}
-    AI: Provide the most relevant and concise answer.
+    AI: Provide the most relevant and concise answer. 
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     final_prompt = prompt_template.format(history=history, query=query)
     # call the groq llm api
     response = client.chat.completions.create(
-        model="gemma2-9b-it",
+        model="qwen-qwq-32b",
         messages=[{"role": "system", "content": final_prompt}],
         temperature=0,
         max_tokens=1024,
@@ -40,6 +41,8 @@ def generate_prompt(query):
         stop=None
     )
     response_text = response.choices[0].message.content.strip()
+    # remove content within <think>...</think> tags
+    response_text = re.sub(r"<think>.*?</think>", "", response_text, flags=re.DOTALL).strip()
     conversation_history.append((query, response_text))  # update conversation history
     return response_text
 
