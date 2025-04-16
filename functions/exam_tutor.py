@@ -23,13 +23,13 @@ def generate_question_and_answers(query):  # function to generate prompt
     template = """  
     {history}
     User: {query}
-    AI: Generate at least 10 questions and answers based on the text. Only return Q1&A1 pairs.
+    AI: Generate at least 10 questions and answers based on the text.
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     final_prompt = prompt_template.format(history=history, query=query)
     # call the groq llm api
     response = client.chat.completions.create(
-        model="qwen-2.5-32b",
+        model= "llama-3.1-8b-instant",
         messages=[{"role": "system", "content": final_prompt}],
         temperature=0,
         max_tokens=1024,

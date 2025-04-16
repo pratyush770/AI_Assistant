@@ -3,6 +3,7 @@ import streamlit as st
 import os  # for setting environment variable
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from groq import Groq  # for using LLM
+import re
 
 sec_key = st.secrets["GROQ_API_KEY"]
 langsmith_sec_key = st.secrets['LANGCHAIN_API_KEY']
@@ -29,7 +30,7 @@ def code_assistant(code_snippet):  # function for code assistance
     final_prompt = prompt_template.format(history=history, code_snippet=code_snippet)
     # call the groq llm api
     response = client.chat.completions.create(
-        model="qwen-2.5-coder-32b",
+        model="qwen-qwq-32b",
         messages=[{"role": "system", "content": final_prompt}],
         temperature=0,
         max_tokens=1024,
@@ -37,6 +38,8 @@ def code_assistant(code_snippet):  # function for code assistance
         stop=None
     )
     response_text = response.choices[0].message.content.strip()
+    # remove content within <think>...</think> tags
+    response_text = re.sub(r"<think>.*?</think>", "", response_text, flags=re.DOTALL).strip()
     conversation_history.append((code_snippet, response_text))  # update conversation history
     return response_text
 
