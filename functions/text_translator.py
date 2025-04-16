@@ -3,7 +3,6 @@ import streamlit as st
 import os  # for setting environment variable
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from groq import Groq  # for using LLM
-import re
 
 sec_key = st.secrets["GROQ_API_KEY"]
 os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
