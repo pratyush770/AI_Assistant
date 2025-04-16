@@ -6,11 +6,7 @@ from groq import Groq  # for using LLM
 import re
 
 sec_key = st.secrets["GROQ_API_KEY"]
-langsmith_sec_key = st.secrets['LANGCHAIN_API_KEY']
 os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
-os.environ['LANGCHAIN_API_KEY'] = langsmith_sec_key
-os.environ['LANGCHAIN_TRACING_V2'] = "true"
-os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
 
 client = Groq(api_key=sec_key)  # initialize the groq client
 conversation_history = []  # store conversation history
