@@ -2,12 +2,25 @@
 import streamlit as st
 import os  # for setting environment variable
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
-from groq import Groq  # for using LLM
+from langchain_groq import ChatGroq  # for using LLM
 
 sec_key = st.secrets["GROQ_API_KEY"]
-os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
+# os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
+langsmith_sec_key = st.secrets["LANGSMITH_API_KEY"]
+os.environ["LANGSMITH_API_KEY"] = langsmith_sec_key
+os.environ['LANGCHAIN_TRACING_V2'] = "true"
+os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
 
-client = Groq(api_key=sec_key)  # initialize the groq client
+model_name = "meta-llama/llama-4-scout-17b-16e-instruct"
+llm = ChatGroq(  # create the llm
+    model_name=model_name,
+    temperature=0,
+    groq_api_key=sec_key,
+    stop=None,
+    model_kwargs={"top_p": 0},
+    max_tokens=1024
+)
+
 conversation_history = []  # store conversation history
 
 
@@ -22,17 +35,8 @@ def generate_question_and_answers(query):  # function to generate prompt
     AI: Generate at least 10 questions and answers based on the text.
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
-    final_prompt = prompt_template.format(history=history, query=query)
-    # call the groq llm api
-    response = client.chat.completions.create(
-        model= "meta-llama/llama-4-scout-17b-16e-instruct",
-        messages=[{"role": "system", "content": final_prompt}],
-        temperature=0,
-        max_tokens=1024,
-        top_p=0,
-        stop=None
-    )
-    response_text = response.choices[0].message.content.strip()
+    sequence = prompt_template | llm
+    response_text = sequence.invoke({"history": history, "query": query}).content.strip()
     conversation_history.append((query, response_text))  # update conversation history
     return response_text
 
