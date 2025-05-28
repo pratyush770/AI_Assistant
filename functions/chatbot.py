@@ -33,10 +33,10 @@ def generate_prompt(query):  # function to generate prompt
     polite_messages = {"thanks", "thank you", "thx", "appreciate it", "ty", "okay thanks", "thnx", "okay thank you"}
     if query.lower() in polite_messages:
         return "You're welcome! Let me know if you need anything else."
-    template = """  
+    template = """
     {history}
     User: {query}
-    AI: Provide the most relevant and concise answer. 
+    AI: Provide the most relevant and concise answer.
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     sequence = prompt_template | llm
