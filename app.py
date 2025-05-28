@@ -4,7 +4,10 @@ from functions.text_translator import translate_text  # for translating text
 from functions.code_assistant import code_assistant  # for code assistance
 from functions.exam_tutor import generate_question_and_answers  # for generating questions and answers
 from functions.grammar_check import grammar_check  # for grammar check
+from functions.web_crawler import get_embeddings, get_vector_store, is_vector_store_initialized, initialize_vector_store, query_vector_store
+from functions.pdf_crawler import get_embeddings_pdf, get_vector_store_pdf, is_vector_store_initialized_pdf, initialize_vector_store_pdf, query_vector_store_pdf
 from langchain_core.messages import AIMessage, HumanMessage
+from pypdf import PdfReader
 
 st.set_page_config(  # set page configurations
     page_title="AI Assistant",
@@ -70,6 +73,11 @@ if st.sidebar.button("Exam tutor"):
     if st.session_state.selected_option != "tutor":
         reset_query()
     st.session_state.selected_option = "tutor"
+
+if st.sidebar.button("Q&A tool"):
+    if st.session_state.selected_option != "q&a_tool":
+        reset_query()
+    st.session_state.selected_option = "q&a_tool"
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
@@ -147,3 +155,81 @@ if st.session_state.selected_option == "tutor":  # for generating questions and 
     if st.session_state.response:
         formatted_response = response.replace("\n", "<br>")
         st.write(formatted_response, unsafe_allow_html=True)  # display formatted response with line breaks
+
+if st.session_state.selected_option == "q&a_tool":  # for q&a using rag
+    st.write("")
+    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
+    with col1:
+        website_clicked = st.button("Website")  # for website
+    with col2:
+        pdf_clicked = st.button("PDF file")  # for pdf
+    # track button states using session state
+    if website_clicked:
+        st.session_state.website_clicked = True
+        st.session_state.pdf_clicked = False
+    elif pdf_clicked:
+        st.session_state.pdf_clicked = True
+        st.session_state.website_clicked = False
+
+    # handle website option
+    if getattr(st.session_state, "website_clicked", False):
+        url = st.text_input("Enter the URL of the webpage:")  # ask for user input
+        # reset query and response if the url changes
+        if "current_url" not in st.session_state:
+            st.session_state.current_url = None
+        if url != st.session_state.current_url:
+            st.session_state.query = ""  # reset query
+            st.session_state.response = ""  # reset response
+            st.session_state.current_url = url  # update current url
+        try:
+            if url:
+                _embeddings = get_embeddings()  # get centralized embeddings
+                vector_store = get_vector_store(_embeddings)  # get centralized vector store
+                # check if the vector store is already initialized
+                if not is_vector_store_initialized(vector_store, url):
+                    with st.spinner("Initializing vector.."):
+                        vector_store = initialize_vector_store(url, vector_store)
+                else:
+                    pass
+                query = st.text_input("Enter your query:")  # ask for user input
+                if query:
+                    with st.spinner("Generating response.."):
+                        result = query_vector_store(vector_store, query, url)
+                        st.write(result)
+        except Exception as e:
+            st.error(f"An error occurred: {e}")
+
+    # handle pdf option
+    elif getattr(st.session_state, "pdf_clicked", False):
+        pdf_file = st.file_uploader("Upload PDF", type="pdf", accept_multiple_files=False)  # asks user to upload pdf file
+        # track the current pdf file using session state
+        if "current_pdf" not in st.session_state:
+            st.session_state.current_pdf = None
+        # reset query and response if a new pdf is uploaded
+        if pdf_file and pdf_file.name != st.session_state.current_pdf:
+            st.session_state.query = ""  # reset query
+            st.session_state.response = ""  # reset response
+            st.session_state.current_pdf = pdf_file.name  # update current pdf file name
+        if pdf_file:
+            try:
+                # extract text from the uploaded pdf
+                pdf_reader = PdfReader(pdf_file)
+                pdf_text = ""
+                for page in pdf_reader.pages:
+                    pdf_text += page.extract_text()
+                # get centralized embeddings and vector store
+                _embeddings = get_embeddings_pdf()
+                vector_store = get_vector_store_pdf(_embeddings)
+                # check if the vector store is already initialized for this PDF
+                if not is_vector_store_initialized_pdf(vector_store, pdf_file.name):
+                    with st.spinner("Initializing vector.."):
+                        vector_store = initialize_vector_store_pdf(pdf_file.name, pdf_text, vector_store)
+                else:
+                    pass
+                query = st.text_input("Enter your query:")  # ask for user input
+                if query:
+                    with st.spinner("Generating response.."):
+                        result = query_vector_store_pdf(vector_store, query, pdf_file.name)
+                        st.write(result)
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
