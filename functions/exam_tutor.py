@@ -18,7 +18,9 @@ llm = ChatGroq(  # create the llm
     groq_api_key=sec_key,
     stop=None,
     model_kwargs={"top_p": 0},
-    max_tokens=1024
+    max_tokens=None,
+    timeout=None,
+    max_retries=2
 )
 
 conversation_history = []  # store conversation history
