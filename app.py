@@ -1,5 +1,5 @@
 import streamlit as st  # for ui generation
-from functions.chatbot import generate_prompt  # for generating prompt
+from functions.chatbot import get_result  # for generating prompt
 from functions.text_translator import translate_text  # for translating text
 from functions.code_assistant import code_assistant  # for code assistance
 from functions.exam_tutor import generate_question_and_answers  # for generating questions and answers
@@ -21,15 +21,15 @@ st.sidebar.write("")
 st.sidebar.write("")
 
 languages = (  # tuple of languages
-    "Afrikaans", "Albanian", "Amharic", "Arabic", "Armenian", "Azerbaijani", "Basque", "Belarusian", "Bengali", "Bosnian", "Bulgarian", "Catalan",
-    "Cebuano", "Chichewa", "Chinese (Simplified)", "Chinese (Traditional)", "Corsican", "Croatian", "Czech", "Danish", "Dutch", "English", "Esperanto",
+    "Afrikaans", "Albanian", "Amharic", "Arabic", "Armenian", "Basque", "Belarusian", "Bengali", "Bosnian", "Bulgarian", "Catalan",
+    "Cebuano", "Chichewa", "Chinese", "Corsican", "Croatian", "Czech", "Danish", "Dutch", "English", "Esperanto",
     "Estonian", "Filipino", "Finnish", "French", "Frisian", "Galician", "Georgian", "German", "Greek", "Gujarati", "Haitian Creole", "Hausa",
     "Hawaiian", "Hebrew", "Hindi", "Hmong", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Irish", "Italian", "Japanese", "Javanese", "Kannada",
     "Kazakh", "Khmer", "Kinyarwanda", "Korean", "Kurdish (Kurmanji)", "Kyrgyz", "Lao", "Latin", "Latvian", "Lithuanian", "Luxembourgish",
     "Macedonian", "Malagasy", "Malay", "Malayalam", "Maltese", "Maori", "Marathi", "Mongolian", "Myanmar (Burmese)", "Nepali", "Norwegian",
     "Odia (Oriya)", "Pashto", "Persian", "Polish", "Portuguese", "Punjabi", "Romanian", "Russian", "Samoan", "Scots Gaelic", "Serbian", "Sesotho",
     "Shona", "Sindhi", "Sinhala", "Slovak", "Slovenian", "Somali", "Spanish", "Sundanese", "Swahili", "Swedish", "Tajik", "Tamil", "Tatar", "Telugu",
-    "Thai", "Turkish", "Turkmen", "Ukrainian", "Urdu", "Uyghur", "Uzbek", "Vietnamese", "Welsh", "Xhosa", "Yiddish", "Yoruba", "Zulu"
+    "Thai", "Ukrainian", "Urdu", "Uyghur", "Uzbek", "Vietnamese", "Welsh", "Xhosa", "Yiddish", "Yoruba", "Zulu"
 )
 
 # Initialize session state for selected option and query/response
@@ -99,10 +99,13 @@ if st.session_state.selected_option == "chatbot":  # for chatbot
         st.session_state.chat_history.append(HumanMessage(content=query))
         with st.chat_message("Human"):
             st.markdown(query)  # display human message
+        # generate the AI response using the chat history
+        response, updated_chat_history = get_result(query, st.session_state.chat_history[-3:])
+        ai_response = AIMessage(content=response)
+        st.session_state.chat_history.append(ai_response)
+        # display the AI message
         with st.chat_message("AI"):
-            response = generate_prompt(query)  # generate response
             st.markdown(response)
-        st.session_state.chat_history.append(AIMessage(content=response))
 
 if st.session_state.selected_option == "translate":  # for text translation
     st.write("")
