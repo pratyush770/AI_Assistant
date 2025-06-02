@@ -1,5 +1,6 @@
 # from secret_key import sec_key  # secret_key used for API call
 import streamlit as st
+import re
 import os  # for setting environment variable
 from langchain_core.prompts import PromptTemplate  # for defining a fixed prompt
 from langchain_groq import ChatGroq  # for using LLM
@@ -11,7 +12,7 @@ os.environ["LANGSMITH_API_KEY"] = langsmith_sec_key
 os.environ['LANGCHAIN_TRACING_V2'] = "true"
 os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
 
-model_name = "gemma2-9b-it"
+model_name = "qwen-qwq-32b"
 llm = ChatGroq(  # create the llm
     model_name=model_name,
     temperature=0,
@@ -36,7 +37,8 @@ def grammar_check(query):  # function to check grammatical errors
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     sequence = prompt_template | llm
-    response_text = sequence.invoke({"history": history, "query": query}).content.strip()
+    response = sequence.invoke({"history": history, "query": query}).content
+    response_text = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL).strip()
     conversation_history.append((query, response_text))  # update conversation history
     return response_text
 
