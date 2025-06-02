@@ -186,17 +186,18 @@ if st.session_state.selected_option == "q&a_tool":  # for q&a using rag
             st.session_state.current_url = url  # update current url
         try:
             if url:
-                _embeddings = get_embeddings()  # get centralized embeddings
+                with st.spinner("Generating embeddings"):
+                    _embeddings = get_embeddings()  # get centralized embeddings
                 vector_store = get_vector_store(_embeddings)  # get centralized vector store
                 # check if the vector store is already initialized
                 if not is_vector_store_initialized(vector_store, url):
-                    with st.spinner("Initializing vector.."):
+                    with st.spinner("Initializing vector"):
                         vector_store = initialize_vector_store(url, vector_store)
                 else:
                     pass
                 query = st.text_input("Enter your query:")  # ask for user input
                 if query:
-                    with st.spinner("Generating response.."):
+                    with st.spinner("Generating response"):
                         result = query_vector_store(vector_store, query, url)
                         st.write(result)
         except Exception as e:
@@ -221,17 +222,18 @@ if st.session_state.selected_option == "q&a_tool":  # for q&a using rag
                 for page in pdf_reader.pages:
                     pdf_text += page.extract_text()
                 # get centralized embeddings and vector store
-                _embeddings = get_embeddings_pdf()
+                with st.spinner("Generating embeddings"):
+                    _embeddings = get_embeddings_pdf()
                 vector_store = get_vector_store_pdf(_embeddings)
                 # check if the vector store is already initialized for this PDF
                 if not is_vector_store_initialized_pdf(vector_store, pdf_file.name):
-                    with st.spinner("Initializing vector.."):
+                    with st.spinner("Initializing vector"):
                         vector_store = initialize_vector_store_pdf(pdf_file.name, pdf_text, vector_store)
                 else:
                     pass
                 query = st.text_input("Enter your query:")  # ask for user input
                 if query:
-                    with st.spinner("Generating response.."):
+                    with st.spinner("Generating response"):
                         result = query_vector_store_pdf(vector_store, query, pdf_file.name)
                         st.write(result)
             except Exception as e:
