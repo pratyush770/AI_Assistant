@@ -73,6 +73,10 @@ graph.add_conditional_edges(
 graph.add_edge("tools", "llm")  # goes back from tool node to our agent node
 app = graph.compile()
 
+# image_path = "chatbot_graph.png"  # image path
+# with open(image_path, "wb") as f:
+#     f.write(app.get_graph().draw_mermaid_png())  # get the graph image
+
 
 def get_result(query, chat_history=None):
     if chat_history is None:
