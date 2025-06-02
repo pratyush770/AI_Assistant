@@ -1,5 +1,5 @@
 ## AI Assistant
-**AI Assistant** is a generative AI project built using **Langchain** and **LangGraph**. It provides a variety of features to assist users in various tasks, including chatbot interactions, text translation, code assistance, grammar checking, exam tutoring and url/pdf q&a. The assistant leverages state-of-the-art AI models, along with **LangGraph** and **custom tools**, to deliver intelligent and helpful responses in each of these areas.
+**AI Assistant** is a generative AI project built using **Langchain** and **LangGraph**. It provides a variety of features to assist users in various tasks, including chatbot interactions, text translation, code assistance, grammar checking, exam tutoring and url/pdf q&a. The assistant leverages state-of-the-art AI models, along with **LangGraph** and **Custom Tools**, to deliver intelligent and helpful responses in each of these areas.
 ## Features
 1. **Chatbot (Enhanced with LangGraph and Custom Tools)**  
    Engage in interactive conversations with the AI to answer questions, provide recommendations, or have casual discussions. The integration of LangGraph enables advanced reasoning and dynamic workflows, while 
@@ -26,8 +26,8 @@
 - **Langsmith**: Platform for debugging, testing, monitoring, and improving LLM-powered applications.
 - **Streamlit**: Framework for deploying the web application.
 - **PyPDFLoader / WebBaseLoader**: Libraries for loading and processing PDF files or web pages.
-- **Vector Store (e.g., AstraDB)**: For storing embeddings of the uploaded documents to enable efficient retrieval and question-answering.
-- **Embedding Models (e.g., HuggingFaceEmbeddings)**: To generate vector representations of the document content.
+- **Vector Store (AstraDB)**: For storing embeddings of the uploaded documents to enable efficient retrieval and question-answering.
+- **Embedding Models (HuggingFaceEmbeddings)**: To generate vector representations of the document content.
 ## How to Deploy
 - Clone the repository by the following command: `git clone https://github.com/pratyush770/AI_Assistant.git`
   
