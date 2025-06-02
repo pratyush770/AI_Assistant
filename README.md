@@ -1,9 +1,13 @@
 ## AI Assistant
-**AI Assistant** is a generative AI project built using **Langchain**. It provides a variety of features to assist users in various tasks, including chatbot interactions, text translation, code assistance, grammar checking and exam tutoring. The assistant leverages state-of-the-art AI models to deliver intelligent and helpful responses in each of these areas.
+**AI Assistant** is a generative AI project built using **Langchain** and **LangGraph**. It provides a variety of features to assist users in various tasks, including chatbot interactions, text translation, code assistance, grammar checking, exam tutoring and url/pdf q&a. The assistant leverages state-of-the-art AI models, along with **LangGraph** and **custom tools**, to deliver intelligent and helpful responses in each of these areas.
 ## Features
-1. **Chatbot**  
-   Engage in interactive conversations with the AI to answer questions, provide recommendations, or have casual discussions.
-
+1. **Chatbot (Enhanced with LangGraph and Custom Tools)**  
+   Engage in interactive conversations with the AI to answer questions, provide recommendations, or have casual discussions. The integration of LangGraph enables advanced reasoning and dynamic workflows, while 
+   custom tools allow the chatbot to perform tasks such as:
+   - Fetching real-time search results using DuckDuckGoSearch.
+   - Retrieving the current day using the get_current_day function.
+   - Performing basic arithmetic operations (add, sub, mul, div) for quick calculations.
+     
 2. **Text Translator**  
    Translate text between multiple languages seamlessly.
 3. **Code Assistant**  
@@ -18,6 +22,7 @@
 - **Python**: Core programming language for the application.
   
 - **Langchain**: Framework for building applications with large language models (LLMs), enabling reasoning, memory, and tool integration.
+- **LangGraph** : A library within the Langchain ecosystem that enhances the chatbot's ability to perform complex workflows and multi-step reasoning.
 - **Langsmith**: Platform for debugging, testing, monitoring, and improving LLM-powered applications.
 - **Streamlit**: Framework for deploying the web application.
 - **PyPDFLoader / WebBaseLoader**: Libraries for loading and processing PDF files or web pages.
