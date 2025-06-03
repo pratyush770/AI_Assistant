@@ -40,7 +40,7 @@ llm = ChatGroq(  # create the llm
 def generate_prompt(state: AgentState) -> AgentState:
     """ Function to generate prompt """
     system_prompt = SystemMessage(
-        content="You are a helpful AI assistant. Provide the most relevant and concise answer."
+        content="You are a helpful AI assistant. Use the provided tools to fetch real-time data when necessary. If no tool is required, provide an accurate and concise answer."
     )
     message = [system_prompt] + state.messages
     response = llm.invoke(message)
