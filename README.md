@@ -54,5 +54,4 @@
 - Click on the **Deploy** button and you're done!
     
 ## Deployment  
-The application is deployed on **Streamlit** and is accessible via the following link:  
-[Live Demo] https://ai-assistant-python.streamlit.app/
+The application is deployed on **Streamlit** and is accessible via the following link: **[AI Assistant](https://ai-assistant-python.streamlit.app/)**
