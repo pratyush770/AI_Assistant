@@ -1,5 +1,5 @@
-# from secret_key import sec_key, langsmith_sec_key  # secret_key used for API call
-import streamlit as st
+from secret_key import sec_key, langsmith_sec_key  # secret_key used for API call
+# import streamlit as st
 import os  # for setting environment variable
 from langchain_groq import ChatGroq  # for using LLM
 from langgraph.graph import StateGraph, START, END
@@ -10,12 +10,12 @@ from langchain_core.messages import BaseMessage, SystemMessage, AIMessage, Human
 from langgraph.prebuilt import ToolNode
 from functions.tools import duckduckgosearch, get_current_day
 
-sec_key = st.secrets["GROQ_API_KEY"]
-# os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
-langsmith_sec_key = st.secrets["LANGSMITH_API_KEY"]
-os.environ["LANGSMITH_API_KEY"] = langsmith_sec_key
-os.environ['LANGCHAIN_TRACING_V2'] = "true"
-os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
+# sec_key = st.secrets["GROQ_API_KEY"]
+os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
+# langsmith_sec_key = st.secrets["LANGSMITH_API_KEY"]
+# os.environ["LANGSMITH_API_KEY"] = langsmith_sec_key
+# os.environ['LANGCHAIN_TRACING_V2'] = "true"
+# os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
 
 
 class AgentState(BaseModel):

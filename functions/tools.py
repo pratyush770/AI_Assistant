@@ -1,16 +1,17 @@
 from langchain_core.tools import tool
-from duckduckgo_search import DDGS
 import datetime
+from langchain_community.tools import DuckDuckGoSearchRun
+
 
 @tool
 def duckduckgosearch(input: str) -> str:
-    """ Function to search user input using DuckDuckGo and return the most relevant result.
+    """ Function to search user's input using DuckDuckGoSearchRun and return the most relevant result.
     Parameter:
         input -> user input
     """
-    results = DDGS().text(input, safesearch="off", max_results=1)
-    res = " ".join(r['body'] for r in results)
-    return res
+    search = DuckDuckGoSearchRun()
+    result = search.invoke(input)
+    return result
 
 
 @tool
