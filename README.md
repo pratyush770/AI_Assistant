@@ -4,7 +4,7 @@
 1. **Chatbot (Enhanced with LangGraph and Custom Tools)**  
    Engage in interactive conversations with the AI to answer questions, provide recommendations, or have casual discussions. The integration of LangGraph enables advanced reasoning and dynamic workflows, while 
    custom tools allow the chatbot to perform tasks such as:
-   - Fetching real-time search results using DuckDuckGo.
+   - Fetching real-time search results using DuckDuckGoSearch.
    - Retrieving the current day using the get_current_day function.
    - Performing basic arithmetic operations (add, sub, mul, div) for quick calculations.
      
@@ -54,5 +54,4 @@
 - Click on the **Deploy** button and you're done!
     
 ## Deployment  
-The application is deployed on **Streamlit** and is accessible via the following link:  
-[Live Demo] https://ai-assistant-python.streamlit.app/
+The application is deployed on **Streamlit** and is accessible via the following link: **[AI Assistant](https://ai-assistant-python.streamlit.app/)**
