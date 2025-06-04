@@ -8,32 +8,11 @@ from functions.web_crawler import get_embeddings, get_vector_store, is_vector_st
 from functions.pdf_crawler import get_embeddings_pdf, get_vector_store_pdf, is_vector_store_initialized_pdf, initialize_vector_store_pdf, query_vector_store_pdf
 from langchain_core.messages import AIMessage, HumanMessage
 from pypdf import PdfReader
-import pyperclip
-import time
 
 st.set_page_config(  # set page configurations
     page_title="AI Assistant",
     page_icon='🤖',
 )
-
-
-def add_copy_button(response, key):
-    col1, col2, col3, col4, col5, col6, col7, col8 = st.columns(8)
-    with col1:
-        if st.button("Copy", key=key):  # button to copy the response
-            pyperclip.copy(response)  # copy the response to the clipboard
-            st.session_state[f"copied_{key}"] = True  # mark as copied in session state
-    with col2:
-        # check if the button has been clicked
-        if st.session_state.get(f"copied_{key}", False):
-            # create an empty placeholder for the "Copied!" message
-            copied_message = st.empty()
-            copied_message.markdown('<div style="margin-top: 8px;">Copied!</div>', unsafe_allow_html=True)
-            time.sleep(1)
-            copied_message.empty()  # clear the "Copied!" message
-            # reset the session state to prevent the message from reappearing
-            st.session_state[f"copied_{key}"] = False
-
 
 st.title("Your personalized AI Assistant 🤖")  # for giving title to the app
 st.sidebar.title("Choose an option ✅")  # for giving sidebar title
@@ -101,17 +80,17 @@ if st.sidebar.button("Q&A tool"):
     st.session_state.selected_option = "q&a_tool"
 
 if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+    st.session_state.chat_history = [
+        AIMessage(content="Hello, how can i help you?")
+    ]
 
-# Handle the selected option
+# handle the selected option
 if st.session_state.selected_option == "chatbot":  # for chatbot
     st.write("")
-    for idx, message in enumerate(st.session_state.chat_history):   # display chat history
+    for message in st.session_state.chat_history:   # display chat history
         if isinstance(message, AIMessage):
             with st.chat_message("AI"):
                 st.markdown(message.content)
-                st.write("")
-                add_copy_button(message.content, f"ai_{idx}")
         elif isinstance(message, HumanMessage):
             with st.chat_message("Human"):
                 st.markdown(message.content)
@@ -127,8 +106,6 @@ if st.session_state.selected_option == "chatbot":  # for chatbot
         # display the AI message
         with st.chat_message("AI"):
             st.markdown(response)
-            st.write("")
-            add_copy_button(response, f"ai_{len(st.session_state.chat_history) - 1}")
 
 if st.session_state.selected_option == "translate":  # for text translation
     st.write("")
