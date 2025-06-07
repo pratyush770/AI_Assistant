@@ -1,43 +1,26 @@
 import streamlit as st
-import pyrebase
-# from secret_key import (
-#     FIREBASE_API_KEY, AUTH_DOMAIN, PROJECT_ID, DATABASE_URL, STORAGE_BUCKET,
-#     MESSAGING_SENDER_ID, APP_ID, MEASUREMENT_ID
-# )
+import re
+import mysql.connector
 
 st.set_page_config(
     page_title="Login User",
     page_icon="👤"
 )
 
-# load credentials
-firebase_api_key = st.secrets["FIREBASE_API_KEY"]
-auth_domain = st.secrets["AUTH_DOMAIN"]
-project_id = st.secrets["PROJECT_ID"]
-database_url = st.secrets["DATABASE_URL"]
-storage_bucket = st.secret["STORAGE_BUCKET"]
-messaging_sender_id = st.secrets["MESSAGING_SENDER_ID"]
-app_id = st.secrets["APP_ID"]
-measurement_id = st.secrets["MEASUREMENT_ID"]
+host_name = st.secrets["HOST"]
+user_name = st.secrets["USER"]
+pwd = st.secrets["PASSWORD"]
+db = st.secrets["DATABASE"]
 
-# firebase configuration
-firebaseConfig = {
-    "apiKey": firebase_api_key,
-    "authDomain": auth_domain,
-    "projectId": project_id,
-    "databaseURL": database_url,
-    "storageBucket": storage_bucket,
-    "messagingSenderId": messaging_sender_id,
-    "appId": app_id,
-    "measurementId": measurement_id
-}
+mydb = mysql.connector.connect(
+    host=host_name,
+    user=user_name,
+    password=pwd,
+    port=3306,
+    database=db
+)
 
-# initialize firebase app and authentication
-firebase = pyrebase.initialize_app(firebaseConfig)
-auth = firebase.auth()
-
-# initialize database
-db = firebase.database()
+mycursor = mydb.cursor()
 
 st.markdown('<h1 style="text-align: center;">Welcome Back!</h1>', unsafe_allow_html=True)
 st.write("")
@@ -46,29 +29,28 @@ email = st.text_input("Enter your email")
 password = st.text_input("Enter your password", type="password").strip()
 login = st.button("Sign in", use_container_width=True)
 if login:
+    errors = []
+    if not email or not password:
+        errors.append("Error: All fields are required")
+    # check email validity
+    if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
+        errors.append("Error: Enter a valid email format.")
     try:
-        # sign in with email and password
-        user = auth.sign_in_with_email_and_password(email, password)
-        # refresh token
-        refreshed_user = auth.refresh(user['refreshToken'])
-        id_token = refreshed_user['idToken']
-        local_id = refreshed_user['userId']
-        # store user information in the session state
-        st.session_state['user'] = {
-            'id': local_id,
-            'email': email,
-            'id_token': id_token
-        }
-        st.switch_page("pages/app.py")
+        sql = "SELECT * FROM users WHERE email = %s AND password = %s"
+        values = (email, password)  # Pass parameters as a tuple
+        mycursor.execute(sql, values)
+        result = mycursor.fetchone()
+        if result is not None:
+            db_email = result[0]
+            db_pass = result[1]
+            if db_email == email and db_pass == password:
+                st.switch_page("pages/app.py")
+        else:
+            errors.append("Error: Enter valid credentials")
+        if errors:
+            st.error(errors[0])
     except Exception as e:
-        # Extract the error message from the exception
-        try:
-            error_json = e.args[1]  # The second argument contains the JSON response
-            error_message = eval(error_json)["error"]["message"]  # Extract the "message" field
-            error_message = error_message.title()
-            st.error(f"Error: {error_message}")
-        except:
-            st.error("An unexpected error occurred. Please try again.")
+        st.error(e)
 
 register = st.button("Don't have an account? Register", type="tertiary", use_container_width=True)
 if register:
