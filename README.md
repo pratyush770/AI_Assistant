@@ -28,6 +28,7 @@
 - **PyPDFLoader / WebBaseLoader**: Libraries for loading and processing PDF files or web pages.
 - **Vector Store (AstraDB)**: For storing embeddings of the uploaded documents to enable efficient retrieval and question-answering.
 - **Embedding Models (HuggingFaceEmbeddings)**: To generate vector representations of the document content.
+- **Clever Cloud Database** : SQL database for managing user authentication (login and sign-up).
 ## How to Deploy
 - Clone the repository by the following command: `git clone https://github.com/pratyush770/AI_Assistant.git`
   
@@ -42,6 +43,9 @@
 - Click on **TRY FOR FREE** and sign in using your google account.
 - Click on **Create a Database** to create the database.
 - In the secret_key.py add `ASTRA_DB_API_ENDPOINT_SEC = "Your astra db enpdoint"` and `ASTRA_DB_API_TOKEN_SEC = "Your astra db token"`.
+- Visit **Clever Cloud** and login for storing user details using this link: https://console.clever-cloud.com
+- Create an **add on** and select on **MySQL** and create a database.
+- In the secret_key.py add the database details.
 - Create a github repository and make sure to add **secret_key.py** in .gitignore for security reasons.
 - Create your **Streamlit** account by visiting the following link: https://streamlit.io/cloud
 - Click on **Create app** button on the top right and then select **Deploy a public app from Github**.
@@ -51,6 +55,10 @@
   - `LANGCHAIN_API_KEY = "Your langsmith secret key"`
   - `ASTRA_DB_API_ENDPOINT_SEC = "Your astra db endpoint"`
   - `ASTRA_DB_API_TOKEN_SEC = "Your astra db token"`
+  - `HOST = "Your db host name"`
+  - `USER = "Your db user name"`
+  - `PASSWORD = "Your db password"`
+  - `DATABASE = "Your db name"`
 - Click on the **Deploy** button and you're done!
     
 ## Deployment  
