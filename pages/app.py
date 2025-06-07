@@ -1,8 +1,8 @@
 import streamlit as st  # for ui generation
 from functions.chatbot import get_result  # for generating prompt
 from functions.text_translator import translate_text  # for translating text
-from functions.code_assistant import code_assistant  # for code assistance
-from functions.exam_tutor import generate_question_and_answers  # for generating questions and answers
+from functions.code_assistant import get_code  # for code assistance
+from functions.exam_tutor import get_answers  # for generating questions and answers
 from functions.grammar_check import grammar_check  # for grammar check
 from functions.web_crawler import get_embeddings, get_vector_store, is_vector_store_initialized, initialize_vector_store, query_vector_store
 from functions.pdf_crawler import get_embeddings_pdf, get_vector_store_pdf, is_vector_store_initialized_pdf, initialize_vector_store_pdf, query_vector_store_pdf
@@ -20,16 +20,10 @@ st.sidebar.write("")  # empty line
 st.sidebar.write("")
 st.sidebar.write("")
 
-languages = (  # tuple of languages
-    "Afrikaans", "Albanian", "Amharic", "Arabic", "Armenian", "Basque", "Belarusian", "Bengali", "Bosnian", "Bulgarian", "Catalan",
-    "Cebuano", "Chichewa", "Chinese", "Corsican", "Croatian", "Czech", "Danish", "Dutch", "English", "Esperanto",
-    "Estonian", "Filipino", "Finnish", "French", "Frisian", "Galician", "Georgian", "German", "Greek", "Gujarati", "Haitian Creole", "Hausa",
-    "Hawaiian", "Hebrew", "Hindi", "Hmong", "Hungarian", "Icelandic", "Igbo", "Indonesian", "Irish", "Italian", "Japanese", "Javanese", "Kannada",
-    "Kazakh", "Khmer", "Kinyarwanda", "Korean", "Kurdish (Kurmanji)", "Kyrgyz", "Lao", "Latin", "Latvian", "Lithuanian", "Luxembourgish",
-    "Macedonian", "Malagasy", "Malay", "Malayalam", "Maltese", "Maori", "Marathi", "Mongolian", "Myanmar (Burmese)", "Nepali", "Norwegian",
-    "Odia (Oriya)", "Pashto", "Persian", "Polish", "Portuguese", "Punjabi", "Romanian", "Russian", "Samoan", "Scots Gaelic", "Serbian", "Sesotho",
-    "Shona", "Sindhi", "Sinhala", "Slovak", "Slovenian", "Somali", "Spanish", "Sundanese", "Swahili", "Swedish", "Tajik", "Tamil", "Tatar", "Telugu",
-    "Thai", "Ukrainian", "Urdu", "Uyghur", "Uzbek", "Vietnamese", "Welsh", "Xhosa", "Yiddish", "Yoruba", "Zulu"
+languages = (
+    "Arabic", "Chinese", "Czeck", "Danish", "Dutch", "English", "French", "German",
+    "Greek", "Hindi", "Hungarian", "Indonesian", "Italian", "Japanese", "Korean", "Marathi",
+    "Polish", "Portuguese", "Russian", "Spanish", "Turkish"
 )
 
 # Initialize session state for selected option and query/response
@@ -74,15 +68,21 @@ if st.sidebar.button("Exam tutor"):
         reset_query()
     st.session_state.selected_option = "tutor"
 
-if st.sidebar.button("Q&A tool"):
+if st.sidebar.button("Q& tool"):
     if st.session_state.selected_option != "q&a_tool":
         reset_query()
     st.session_state.selected_option = "q&a_tool"
+
+st.sidebar.divider()
+
+if st.sidebar.button("Logout", type="tertiary"):
+    st.switch_page("login.py")
 
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = [
         AIMessage(content="Hello, how can i help you?")
     ]
+
 
 # handle the selected option
 if st.session_state.selected_option == "chatbot":  # for chatbot
@@ -131,7 +131,7 @@ if st.session_state.selected_option == "code_assistant":  # for code assistant
     if query and query != st.session_state.query:
         st.session_state.query = query
         with st.spinner("Generating response.."):
-            response = code_assistant(query)  # function call
+            response = get_code(query)  # function call
             st.session_state.response = response  # save response
     if st.session_state.response:
         st.write(st.session_state.response)  # display response
@@ -153,7 +153,7 @@ if st.session_state.selected_option == "tutor":  # for generating questions and 
     if query and query != st.session_state.query:  # check if input has changed
         st.session_state.query = query  # update session state
         with st.spinner("Generating questions.."):
-            response = generate_question_and_answers(query)  # function call
+            response = get_answers(query)  # function call
             st.session_state.response = response  # save response
     if st.session_state.response:
         formatted_response = response.replace("\n", "<br>")
