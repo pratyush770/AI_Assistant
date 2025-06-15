@@ -25,8 +25,12 @@ mycursor = mydb.cursor()
 st.markdown('<h1 style="text-align: center;">Create Account</h1>', unsafe_allow_html=True)
 st.write("")
 email = st.text_input("Enter your email")
-password = st.text_input("Enter your password", type="password").strip()
-confirm_pwd = st.text_input("Confirm password", type="password").strip()
+password = st.text_input("Enter your password", type="password")
+confirm_pwd = st.text_input("Confirm password", type="password")
+email = email.strip()
+password = password.strip()
+confirm_pwd = confirm_pwd.strip()
+
 register = st.button("Sign Up", use_container_width=True)
 if register:
     errors = []
