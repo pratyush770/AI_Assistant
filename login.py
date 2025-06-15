@@ -36,6 +36,9 @@ st.write("")
 
 email = st.text_input("Enter your email")
 password = st.text_input("Enter your password", type="password")
+forgot_pass = st.button("Forgot password?", type="tertiary")
+if forgot_pass:
+    st.switch_page("pages/forgot_password.py")
 
 login = st.button("Sign in", use_container_width=True)
 if login:
@@ -55,8 +58,10 @@ if login:
             db_pass = result[1]
             if verify_password(password, db_pass):
                 st.switch_page("pages/app.py")
+            else:
+                errors.append("Error: Enter valid password")
         else:
-            errors.append("Error: Enter valid credentials")
+            errors.append("Error: Email does not exist")
         if errors:
             st.error(errors[0])
     except Exception as e:
