@@ -26,7 +26,10 @@ st.markdown('<h1 style="text-align: center;">Welcome Back!</h1>', unsafe_allow_h
 st.write("")
 
 email = st.text_input("Enter your email")
-password = st.text_input("Enter your password", type="password").strip()
+password = st.text_input("Enter your password", type="password")
+email = email.strip()
+password = password.strip()
+
 login = st.button("Sign in", use_container_width=True)
 if login:
     errors = []
