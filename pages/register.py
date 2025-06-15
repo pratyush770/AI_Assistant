@@ -30,13 +30,11 @@ def hash_password(password: str) -> bytes:
     return bcrypt.hashpw(password_bytes, bcrypt.gensalt())
 
 
-st.markdown('<h1 style="text-align: center;">Create Account</h1>', unsafe_allow_html=True)
+st.markdown('<h1 style="text-align: center;">Create Account </h1>', unsafe_allow_html=True)
 st.write("")
 email = st.text_input("Enter your email")
 password = st.text_input("Enter your password", type="password")
 confirm_pwd = st.text_input("Confirm password", type="password")
-hashed_password = hash_password(password)   # hash the password
-
 register = st.button("Sign Up", use_container_width=True)
 if register:
     errors = []
@@ -55,6 +53,7 @@ if register:
         st.error(errors[0])
     else:
         try:
+            hashed_password = hash_password(password)  # hash the password
             sql = "INSERT INTO users VALUES (%s,%s)"
             values = (email, hashed_password)  # pass parameters as a tuple
             mycursor.execute(sql, values)
