@@ -1,6 +1,7 @@
 import streamlit as st
 import mysql.connector
 import re
+import bcrypt
 
 st.set_page_config(
     page_title="Register User",
@@ -22,14 +23,19 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
+
+# function to hash a password
+def hash_password(password: str) -> bytes:
+    password_bytes = password.encode('utf-8')
+    return bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+
+
 st.markdown('<h1 style="text-align: center;">Create Account</h1>', unsafe_allow_html=True)
 st.write("")
 email = st.text_input("Enter your email")
 password = st.text_input("Enter your password", type="password")
 confirm_pwd = st.text_input("Confirm password", type="password")
-email = email.strip()
-password = password.strip()
-confirm_pwd = confirm_pwd.strip()
+hashed_password = hash_password(password)   # hash the password
 
 register = st.button("Sign Up", use_container_width=True)
 if register:
@@ -50,7 +56,7 @@ if register:
     else:
         try:
             sql = "INSERT INTO users VALUES (%s,%s)"
-            values = (email, password)  # Pass parameters as a tuple
+            values = (email, hashed_password)  # pass parameters as a tuple
             mycursor.execute(sql, values)
             mydb.commit()
             st.switch_page("login.py")

@@ -1,6 +1,7 @@
 import streamlit as st
 import re
 import mysql.connector
+import bcrypt
 
 st.set_page_config(
     page_title="Login User",
@@ -22,13 +23,19 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
+
+# function to verify a password
+def verify_password(provided_password: str, stored_hash: str) -> bool:
+    provided_password_bytes = provided_password.encode('utf-8')
+    stored_hash_bytes = stored_hash.encode('utf-8')  # convert stored hash to bytes
+    return bcrypt.checkpw(provided_password_bytes, stored_hash_bytes)
+
+
 st.markdown('<h1 style="text-align: center;">Welcome Back!</h1>', unsafe_allow_html=True)
 st.write("")
 
 email = st.text_input("Enter your email")
 password = st.text_input("Enter your password", type="password")
-email = email.strip()
-password = password.strip()
 
 login = st.button("Sign in", use_container_width=True)
 if login:
@@ -39,14 +46,14 @@ if login:
     if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
         errors.append("Error: Enter a valid email format.")
     try:
-        sql = "SELECT * FROM users WHERE email = %s AND password = %s"
-        values = (email, password)  # Pass parameters as a tuple
+        sql = "SELECT email, password FROM users WHERE email = %s"
+        values = (email,)  # pass parameters as a tuple
         mycursor.execute(sql, values)
         result = mycursor.fetchone()
         if result is not None:
             db_email = result[0]
             db_pass = result[1]
-            if db_email == email and db_pass == password:
+            if verify_password(password, db_pass):
                 st.switch_page("pages/app.py")
         else:
             errors.append("Error: Enter valid credentials")
