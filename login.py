@@ -57,7 +57,7 @@ if login:
             db_email = result[0]
             db_pass = result[1]
             if verify_password(password, db_pass):
-                st.switch_page("pages/app.py")
+                st.switch_page("pages/home.py")
             else:
                 errors.append("Error: Enter valid password")
         else:
