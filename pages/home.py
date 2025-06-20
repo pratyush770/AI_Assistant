@@ -68,7 +68,7 @@ if st.sidebar.button("Exam tutor"):
         reset_query()
     st.session_state.selected_option = "tutor"
 
-if st.sidebar.button("Q& tool"):
+if st.sidebar.button("Q&A tool"):
     if st.session_state.selected_option != "q&a_tool":
         reset_query()
     st.session_state.selected_option = "q&a_tool"
