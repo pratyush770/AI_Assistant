@@ -6,7 +6,6 @@
    custom tools allow the chatbot to perform tasks such as:
    - Fetching real-time search results using BraveSearch.
    - Retrieving the current day using the get_current_day function.
-   - Performing basic arithmetic operations (add, sub, mul, div) for quick calculations.
      
 2. **Text Translator**  
    Translate text between multiple languages seamlessly.
