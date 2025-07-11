@@ -38,18 +38,20 @@ llm = ChatGroq(  # create the llm
 
 
 def generate_prompt(state: AgentState) -> AgentState:
-    """ Function to generate prompt """
+    """ Function to generate prompt based on query type """
     system_prompt = SystemMessage(
-        content="""You are a helpful assistant. If the user's query requires real-time information, use the `bravesearch` tool.
-
-                Examples:
-                User: What's the latest on SpaceX?
-                -> Use `bravesearch`
-
-                User: What day is today?
-                -> Use `get_current_day`
-                """
-    )
+        content="""You are a helpful assistant.
+        
+        - Use `bravesearch` for any query about events or facts **after Dec 2024** or requiring **real-time info**.
+        - Use `get_current_day` if the user asks about **today's date or day**.
+        - Answer directly for static, known info before 2025.
+        
+        Examples:
+        User: Who won IPL 2025? → Use `bravesearch`
+        User: When was Operation Sindoor held? → Use `bravesearch`
+        User: What day is today? → Use `get_current_day`
+        User: When was Operation Blue Star? → Answer directly
+        """)
     message = [system_prompt] + state.messages
     response = llm.invoke(message)
     return {"messages": [response]}
