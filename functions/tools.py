@@ -1,8 +1,11 @@
 from langchain_core.tools import tool
 import datetime
 from langchain_community.tools import BraveSearch
-from secret_key import BRAVE_API_KEY
+# from secret_key import BRAVE_API_KEY
+import streamlit as st
 import json
+
+sec_key = st.secrets["BRAVE_API_KEY"]
 
 
 @tool
@@ -11,7 +14,7 @@ def bravesearch(input: str)-> str:
     Parameter:
          input -> user input
     """
-    search = BraveSearch.from_api_key(api_key=BRAVE_API_KEY, search_kwargs={"count": 1})
+    search = BraveSearch.from_api_key(api_key=sec_key, search_kwargs={"count": 1})
     result = search.run(input)
     parsed_data = json.loads(result)
     snippet = parsed_data[0]['snippet']
