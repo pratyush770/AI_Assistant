@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage, SystemMessage, AIMessage, HumanMessage
 from langgraph.prebuilt import ToolNode
-from functions.tools import duckduckgosearch, get_current_day
+from functions.tools import bravesearch, get_current_day
 
 sec_key = st.secrets["GROQ_API_KEY"]
 # os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
@@ -22,7 +22,7 @@ class AgentState(BaseModel):
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
 
-tools = [duckduckgosearch, get_current_day]
+tools = [bravesearch, get_current_day]
 
 model_name = "qwen-qwq-32b"  # model name
 llm = ChatGroq(  # create the llm
@@ -40,7 +40,15 @@ llm = ChatGroq(  # create the llm
 def generate_prompt(state: AgentState) -> AgentState:
     """ Function to generate prompt """
     system_prompt = SystemMessage(
-        content="You are a helpful AI assistant. Use the provided tools to fetch real-time data when necessary. If no tool is required, provide an accurate and concise answer."
+        content="""You are a helpful assistant. If the user's query requires real-time information, use the `bravesearch` tool.
+
+                Examples:
+                User: What's the latest on SpaceX?
+                -> Use `bravesearch`
+
+                User: What day is today?
+                -> Use `get_current_day`
+                """
     )
     message = [system_prompt] + state.messages
     response = llm.invoke(message)

@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage, SystemMessage, AIMessage
 from langgraph.prebuilt import ToolNode
-from functions.tools import duckduckgosearch, add_numbers, subtract_numbers, multiply_numbers, divide_numbers
+from functions.tools import bravesearch, add_numbers, subtract_numbers, multiply_numbers, divide_numbers
 
 sec_key = st.secrets["GROQ_API_KEY"]
 # os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
@@ -22,7 +22,7 @@ class AgentState(BaseModel):
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
 
-tools = [duckduckgosearch, add_numbers, subtract_numbers, multiply_numbers, divide_numbers]
+tools = [bravesearch, add_numbers, subtract_numbers, multiply_numbers, divide_numbers]
 
 model_name = "qwen-qwq-32b"  # model name
 llm = ChatGroq(  # create the llm

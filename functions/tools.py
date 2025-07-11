@@ -1,17 +1,21 @@
 from langchain_core.tools import tool
 import datetime
-from langchain_community.tools import DuckDuckGoSearchRun
+from langchain_community.tools import BraveSearch
+from secret_key import BRAVE_API_KEY
+import json
 
 
 @tool
-def duckduckgosearch(input: str) -> str:
-    """ Function to search user's input using DuckDuckGoSearchRun and return the most relevant result.
+def bravesearch(input: str)-> str:
+    """ Function to search user's input using BraveSearchApi and return the most relevant result
     Parameter:
-        input -> user input
+         input -> user input
     """
-    search = DuckDuckGoSearchRun()
-    result = search.invoke(input)
-    return result
+    search = BraveSearch.from_api_key(api_key=BRAVE_API_KEY, search_kwargs={"count": 1})
+    result = search.run(input)
+    parsed_data = json.loads(result)
+    snippet = parsed_data[0]['snippet']
+    return snippet
 
 
 @tool

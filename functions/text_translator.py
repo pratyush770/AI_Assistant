@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage, SystemMessage, AIMessage
 from langgraph.prebuilt import ToolNode
-from functions.tools import duckduckgosearch
+from functions.tools import bravesearch
 
 sec_key = st.secrets["GROQ_API_KEY"]
 # os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
@@ -23,7 +23,7 @@ class AgentState(BaseModel):
     target_lang: str
 
 
-tools = [duckduckgosearch]
+tools = [bravesearch]
 
 model_name = "qwen-qwq-32b"
 llm = ChatGroq(  # create the llm
@@ -90,5 +90,3 @@ def translate_text(query, target_lang):
 
 if __name__ == "__main__":
     print(translate_text("I like to watch anime", "Japanese"))  # for testing purposes
-
-
