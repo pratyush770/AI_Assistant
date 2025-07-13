@@ -7,8 +7,8 @@ from typing import Annotated, Sequence
 from pydantic import BaseModel
 from langgraph.graph.message import add_messages
 from langchain_core.messages import BaseMessage, SystemMessage, AIMessage, HumanMessage
-from langgraph.prebuilt import ToolNode
-from functions.tools import duckduckgosearch, get_current_day
+import re
+from ddgs import DDGS
 
 sec_key = st.secrets["GROQ_API_KEY"]
 # os.environ['GROQ_API_KEY'] = sec_key  # secret_key set as environment variable
@@ -22,8 +22,6 @@ class AgentState(BaseModel):
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
 
-tools = [duckduckgosearch, get_current_day]
-
 model_name = "qwen-qwq-32b"  # model name
 llm = ChatGroq(  # create the llm
     model_name=model_name,
@@ -34,42 +32,46 @@ llm = ChatGroq(  # create the llm
     max_tokens=None,
     timeout=None,
     max_retries=2
-).bind_tools(tools)
+)
+
+
+def duckduckgosearch(input: str) -> str:
+    """ Function to search user's input using DDGS and return the result.
+    Parameter:
+        input -> user input
+    """
+    result = DDGS().text(query=input, num_results=1, backend="auto")
+    snippet = next((r["body"] for r in result if "body" in r), None)
+    return snippet
+
+
+def invoke_duckduckgo(state: AgentState) -> AgentState:
+    """ Function to invoke DuckDuckGo search and update the state """
+    query = state.messages[-1].content  # get the latest user query
+    search_result = duckduckgosearch(query)
+    # append the search results as a new message in the chat history
+    updated_messages = state.messages + [SystemMessage(content=search_result)]
+    return {"messages": updated_messages}
 
 
 def generate_prompt(state: AgentState) -> AgentState:
-    """ Function to generate prompt based on query type """
+    """ Function to generate prompt based on the provided search result """
     system_prompt = SystemMessage(
-        content="You are a helpful AI assistant. Use the provided tools to fetch real-time data when necessary. If no tool is required, provide an accurate and concise answer.")
+        content="You are a helpful AI assistant. Your task is to generate a concise and humanized response "
+                "based strictly on the provided search results. Do not add any extra information, reasoning, "
+                "or commentary beyond what is explicitly stated in the search results. "
+                "Don't mention words like 'search results' in the response")
     message = [system_prompt] + state.messages
     response = llm.invoke(message)
     return {"messages": [response]}
 
 
-def should_continue(state: AgentState) -> str:
-    """ Function to decide the next flow of execution """
-    messages = state.messages
-    last_message = messages[-1]  # get the most recent message
-    if not last_message.tool_calls:  # if there is no further tool calls
-        return "response"  # return the edge
-    else:
-        return "continue"
-
-
 graph = StateGraph(AgentState)
-graph.add_node("llm", generate_prompt)
-tool_node = ToolNode(tools=tools)  # create ToolNode
-graph.add_node("tools", tool_node)
-graph.add_edge(START, "llm")
-graph.add_conditional_edges(
-    "llm",
-    should_continue,
-    {
-        "continue": "tools",
-        "response": END
-    }
-)
-graph.add_edge("tools", "llm")  # goes back from tool node to our agent node
+graph.add_node("invoke_duckduckgo", invoke_duckduckgo)  # node to invoke DuckDuckGo search
+graph.add_node("generate_response", generate_prompt)
+graph.add_edge(START, "invoke_duckduckgo")
+graph.add_edge("invoke_duckduckgo", "generate_response")
+graph.add_edge("generate_response", END)
 app = graph.compile()
 
 # image_path = "chatbot_graph.png"  # image path
@@ -91,6 +93,7 @@ def get_result(query, chat_history=None):
         if isinstance(message, AIMessage)
     ]
     recent_message = ai_messages[-1]  # get the recent message
+    recent_message = re.sub(r"<think>.*?</think>", "", recent_message, flags=re.DOTALL).strip()
     chat_history.append(AIMessage(content=recent_message))
     chat_history = chat_history[-3:]  # trim the chat history again to ensure it contains only the last 3 messages
     return recent_message, chat_history  # return the most recent AI response and the updated chat history
