@@ -1,23 +1,15 @@
 from langchain_core.tools import tool
 import datetime
-from langchain_community.tools import BraveSearch
-# from secret_key import BRAVE_API_KEY
-import streamlit as st
-import json
-
-sec_key = st.secrets["BRAVE_API_KEY"]
-
+from ddgs import DDGS
 
 @tool
-def bravesearch(input: str)-> str:
-    """ Function to search user's input using BraveSearchApi and return the most relevant result
+def duckduckgosearch(input: str) -> str:
+    """ Function to search user's input using DDGS and return the result.
     Parameter:
-         input -> user input
+        input -> user input
     """
-    search = BraveSearch.from_api_key(api_key=sec_key, search_kwargs={"count": 1})
-    result = search.run(input)
-    parsed_data = json.loads(result)
-    snippet = parsed_data[0]['snippet']
+    result = DDGS().text(query=input, num_results=1, backend=["bing", "brave", "duckduckgo", "google", "yandex", "yahoo", "wikipedia"])
+    snippet = next((r["body"] for r in result if "body" in r), None)
     return snippet
 
 
@@ -57,3 +49,8 @@ def divide_numbers(num1: int, num2: int):
         return num1 / num2
     else:
         return num2 / num1
+
+
+if __name__ == "__main__":
+    query = "Who is the captain for india in the ongoing india vs england test series?"
+    print(duckduckgosearch(query))
