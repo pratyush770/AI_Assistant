@@ -4,9 +4,8 @@
 1. **Chatbot (Enhanced with LangGraph and Custom Tools)**  
    Engage in interactive conversations with the AI to answer questions, provide recommendations, or have casual discussions. The integration of LangGraph enables advanced reasoning and dynamic workflows, while 
    custom tools allow the chatbot to perform tasks such as:
-   - Fetching real-time search results using DuckDuckGoSearch.
+   - Fetching real-time search results using BraveSearch.
    - Retrieving the current day using the get_current_day function.
-   - Performing basic arithmetic operations (add, sub, mul, div) for quick calculations.
      
 2. **Text Translator**  
    Translate text between multiple languages seamlessly.
