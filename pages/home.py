@@ -1,7 +1,7 @@
 import streamlit as st  # for ui generation
 from functions.chatbot import get_result  # for generating prompt
 from functions.text_translator import translate_text  # for translating text
-from functions.code_assistant import get_code  # for code assistance
+from functions.code_assistant import code_assistor  # for code assistance
 from functions.exam_tutor import get_answers  # for generating questions and answers
 from functions.grammar_check import grammar_check  # for grammar check
 from functions.web_crawler import get_embeddings, get_vector_store, is_vector_store_initialized, initialize_vector_store, query_vector_store
@@ -9,7 +9,7 @@ from functions.pdf_crawler import get_embeddings_pdf, get_vector_store_pdf, is_v
 from langchain_core.messages import AIMessage, HumanMessage
 from pypdf import PdfReader
 
-st.set_page_config(  # set page configurations
+st.set_page_config(  # set page configuration
     page_title="AI Assistant",
     page_icon='🤖',
 )
@@ -131,7 +131,7 @@ if st.session_state.selected_option == "code_assistant":  # for code assistant
     if query and query != st.session_state.query:
         st.session_state.query = query
         with st.spinner("Generating response.."):
-            response = get_code(query)  # function call
+            response = code_assistor(query)  # function call
             st.session_state.response = response  # save response
     if st.session_state.response:
         st.write(st.session_state.response)  # display response

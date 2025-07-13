@@ -22,27 +22,18 @@ llm = ChatGroq(  # create the llm
     max_tokens=1024
 )
 
-conversation_history = []  # store conversation history
-
 
 def grammar_check(query):  # function to check grammatical errors
-    global conversation_history  # access the global conversation history
-    MAX_HISTORY = 3
-    conversation_history = conversation_history[-MAX_HISTORY:]  # keep only the last 3 exchanges to reduce token usage
-    history = "\n".join([f"User: {q}\nAI: {r}" for q, r in conversation_history])
     template = """  
-    {history}
     User: {query}
     AI: Check for grammatical errors and provide the most relevant and concise answer. 
     """
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     sequence = prompt_template | llm
-    response = sequence.invoke({"history": history, "query": query}).content
+    response = sequence.invoke({"query": query}).content
     response_text = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL).strip()
-    conversation_history.append((query, response_text))  # update conversation history
     return response_text
 
 
 if __name__ == "__main__":
     print(grammar_check("Yesterday is a good day"))  # for testing purpose
-
