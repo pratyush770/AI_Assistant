@@ -33,7 +33,9 @@ def get_answers(query):  # function to generate questions and answers
     prompt_template = PromptTemplate(template=template, input_variables=["history", "query"])
     sequence = prompt_template | llm
     response = sequence.invoke({"query": query}).content
-    response_text = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL).strip()
+    response_text = re.sub(r"\*\*(.*?)\*\*", r"\1", response)  # remove markdown bold
+    response_text = re.sub(r"##+\s*", "", response_text)  # remove markdown headers
+    response_text = re.sub(r"<think>.*?</think>", "", response_text, flags=re.DOTALL).strip()
     return response_text
 
 
