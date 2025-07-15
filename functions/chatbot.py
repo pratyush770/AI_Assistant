@@ -22,7 +22,7 @@ class AgentState(BaseModel):
     messages: Annotated[Sequence[BaseMessage], add_messages]
 
 
-model_name = "qwen-qwq-32b"  # model name
+model_name = "qwen/qwen3-32b"  # model name
 llm = ChatGroq(  # create the llm
     model_name=model_name,
     temperature=0,
