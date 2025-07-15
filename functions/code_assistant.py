@@ -12,7 +12,7 @@ os.environ["LANGSMITH_API_KEY"] = langsmith_sec_key
 os.environ['LANGCHAIN_TRACING_V2'] = "true"
 os.environ['LANGCHAIN_PROJECT'] = "AI Assistant"
 
-model_name = "qwen-qwq-32b"  # model name
+model_name = "qwen/qwen3-32b"  # model name
 llm = ChatGroq(  # create the llm
     model_name=model_name,
     temperature=0,
