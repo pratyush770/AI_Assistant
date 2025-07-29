@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ai-assistant-service
+spec:
+  type: NodePort
+  selector:
+    app: ai-assistant
+  ports:
+    - protocol: TCP
+      port: 8501          # Port your app exposes inside the cluster
+      targetPort: 8501    # Port in the container (Streamlit default)
+      nodePort: 30080     # Port on your Minikube host (external access)
