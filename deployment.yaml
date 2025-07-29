@@ -17,4 +17,12 @@ spec:
         image: localhost:8083/ai-assistant:build-1
         imagePullPolicy: Never
         ports:
-        - containerPort: 8501  
+        - containerPort: 8501
+        volumeMounts:
+        - name: streamlit-secrets
+          mountPath: /app/.streamlit/secrets.toml   
+          subPath: secrets.toml
+      volumes:
+      - name: streamlit-secrets
+        secret:
+          secretName: streamlit-secrets
