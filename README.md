@@ -20,42 +20,68 @@
 - **Langchain**: Framework for building applications with large language models (LLMs), enabling reasoning, memory, and tool integration.
 - **LangGraph** : A library within the Langchain ecosystem that enhances the chatbot's ability to perform complex workflows and multi-step reasoning.
 - **Langsmith**: Platform for debugging, testing, monitoring, and improving LLM-powered applications.
-- **Streamlit**: Framework for deploying the web application.
+- **Azure Kubernetes Service (AKS)**: For container orchestration and deployment of the application.
+- **Docker**: For containerizing the application.
 - **PyPDFLoader / WebBaseLoader**: Libraries for loading and processing PDF files or web pages.
 - **Vector Store (AstraDB)**: For storing embeddings of the uploaded documents to enable efficient retrieval and question-answering.
 - **Embedding Models (HuggingFaceEmbeddings)**: To generate vector representations of the document content.
 - **Clever Cloud Database** : SQL database for managing user authentication (login and sign-up).
 ## How to Deploy
-- Clone the repository by the following command: `git clone https://github.com/pratyush770/AI_Assistant.git`
-  
-- Create a **virtual environment** (venv) first and install all the packages using `pip install requirements.txt`.
-- Create your **GroqCloud** account by visiting the following link: https://console.groq.com
-- Click on the **API Keys** section and generate an API key by giving a name to it.
-- Create a secret_key.py file and add `sec_key = "Your generated secret key"`.
-- Create your **Langsmith** account by visiting the following link: https://www.langchain.com/langsmith
-- Click on the **Settings** section and generate an API key by giving a description to it.
-- In the secret_key.py add `langsmith_sec_key = "Your generated secret key"`.
-- Visit the **Astra DB Console** using this link: https://www.datastax.com/products/datastax-astra
-- Click on **TRY FOR FREE** and sign in using your google account.
-- Click on **Create a Database** to create the database.
-- In the secret_key.py add `ASTRA_DB_API_ENDPOINT_SEC = "Your astra db enpdoint"` and `ASTRA_DB_API_TOKEN_SEC = "Your astra db token"`.
-- Visit **Clever Cloud** and login for storing user details using this link: https://console.clever-cloud.com
-- Create an **add on** and select on **MySQL** and create a database.
-- In the secret_key.py add the database details.
-- Create a github repository and make sure to add **secret_key.py** in .gitignore for security reasons.
-- Create your **Streamlit** account by visiting the following link: https://streamlit.io/cloud
-- Click on **Create app** button on the top right and then select **Deploy a public app from Github**.
-- Select your **created repository, branch, main file path** and give **app url** if needed.
-- Click on the **Advanced settings** and add the following configurations.
-  - `GROQ_API_KEY = "Your groqcloud secret key"`
-  - `LANGCHAIN_API_KEY = "Your langsmith secret key"`
-  - `ASTRA_DB_API_ENDPOINT_SEC = "Your astra db endpoint"`
-  - `ASTRA_DB_API_TOKEN_SEC = "Your astra db token"`
-  - `HOST = "Your db host name"`
-  - `USER = "Your db user name"`
-  - `PASSWORD = "Your db password"`
-  - `DATABASE = "Your db name"`
-- Click on the **Deploy** button and you're done!
+### Prerequisites
+1. Azure CLI: Install the Azure CLI from **[here](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli-windows?view=azure-cli-latest&pivots=msi)**.
+   
+2. Kubernetes CLI (kubectl): Install kubectl from **[here](https://kubernetes.io/docs/tasks/tools/install-kubectl-windows/)**.
+3. Docker: Install Docker from **[here](https://docs.docker.com/desktop/setup/install/windows-install/)**.
     
-## Deployment  
-The application is deployed on **Streamlit** and is accessible via the following link: **[AI Assistant](https://ai-assistant-python.streamlit.app/)**
+### Deployment Steps
+1. Clone the repository using the following command: `git clone https://github.com/pratyush770/AI_Assistant.git`.
+   
+2. Create a virtual environment and install all dependencies using the requirements.txt file.
+3. Create your **GroqCloud** account by visiting the following link: **[GroqCloud](https://console.groq.com)**.
+4. Create a secret_key.py file and add `sec_key = "Your generated secret key"`.
+5. Create your **Langsmith** account by visiting the following link: **[Langsmith](https://www.langchain.com/langsmith)**.
+6. In the secret_key.py add `langsmith_sec_key = "Your generated secret key"`.
+7. Visit the **Astra DB Console** using this link: **[Astra DB](https://www.datastax.com/products/datastax-astra)**
+8. In the secret_key.py add `ASTRA_DB_API_ENDPOINT_SEC = "Your astra db enpdoint"` and `ASTRA_DB_API_TOKEN_SEC = "Your astra db token"`.
+9. Visit **Clever Cloud** and login for storing user details using this link: **[Clever Cloud](https://console.clever-cloud.com)**
+10. Create an **add on** and select on **MySQL** and create a database.
+11. In the secret_key.py add the following database details.
+    - ```
+      HOST = "Your db host name"
+      USER = "Your db user name"
+      PASSWORD = "Your db password"
+      DATABASE = "Your db name"
+      ```
+12. Create a .dockerignore file to exclude sensitive files:
+    - ```
+      .streamlit/secrets.toml
+      secret_key.py```
+13. Build the Docker image using the following command:
+    - `docker build -t ai-assistant:latest`
+14. Push the image to a container registry (e.g. Azure Container Registry):
+    - ```
+      az acr login --name <your-acr-name>`
+      docker tag ai-assistant:latest <your-acr-name>.azurecr.io/ai-assistant:latest
+      docker push <your-acr-name>.azurecr.io/ai-assistant:latest
+      ```
+15. Login to azure cli using the command: `az login`.
+16. Set the default resource group using the command: `az configure --defaults group=<your-resource-group>`.
+17. Get AKS credentials using the command: `az aks get-credentials --name <your-aks-cluster-name>`.
+18. Update the deployment.yaml file to use the Docker image from your container registry:
+    - ```
+      spec:
+       containers:
+       - name: ai-assistant
+         image: <your-acr-name>.azurecr.io/ai-assistant:latest
+         imagePullPolicy: Always
+      ```
+19. Apply the Kubernetes manifests:
+    - ```
+      kubectl apply -f deployment.yaml
+      kubectl apply -f service.yaml
+      ```
+20. Check the status of the pods using the command: `kubectl get pods`.
+21. Access the application via the service's external IP using the command: `kubectl get svc`.
+
+## Deployment
+The application is deployed on Azure Kubernetes Service (AKS) and is accessible via the external IP provided by the Kubernetes service through the link: **[AI Assistant](http://ai-assistant.cloud/)**.
