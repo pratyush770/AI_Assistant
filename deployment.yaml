@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-assistant
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: ai-assistant
+  template:
+    metadata:
+      labels:
+        app: ai-assistant
+    spec:
+      containers:
+      - name: ai-assistant
+        image: docker.io/pratyush770/ai-assistant:build-2 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8501
+        volumeMounts:
+        - name: streamlit-secrets
+          mountPath: /app/.streamlit/secrets.toml
+          subPath: secrets.toml
+      volumes:
+      - name: streamlit-secrets
+        secret:
+          secretName: streamlit-secrets 
