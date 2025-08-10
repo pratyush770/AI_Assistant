@@ -1,10 +1,6 @@
 # Use an official Python base image
 FROM python:3.11-slim
 
-# Create a non-root user and switch to it
-RUN useradd -m nonroot
-USER nonroot
-
 # Set working directory
 WORKDIR /app
 
