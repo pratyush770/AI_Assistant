@@ -27,7 +27,7 @@ ASTRA_DB_KEYSPACE = "AstraDb_Langchain"
 
 # initialize llm
 llm = ChatGroq(
-    model="qwen/qwen3-32b",  # model name
+    model="meta-llama/llama-4-scout-17b-16e-instruct",  # model name
     temperature=0,
     max_tokens=None,
     timeout=None,
