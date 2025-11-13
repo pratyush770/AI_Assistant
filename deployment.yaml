@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: ai-assistant
-        image: docker.io/pratyush770/ai-assistant:build-7 
+        image: docker.io/pratyush770/ai-assistant:latest 
         imagePullPolicy: Always
         ports:
         - containerPort: 8501
