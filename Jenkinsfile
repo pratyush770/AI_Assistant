@@ -2,50 +2,50 @@ pipeline {
     agent {
         kubernetes {
             yaml '''
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: sonar-scanner
-    image: sonarsource/sonar-scanner-cli
-    command: ["cat"]
-    tty: true
-
-  - name: kubectl
-    image: bitnami/kubectl:latest
-    command: ["cat"]
-    tty: true
-    securityContext:
-      runAsUser: 0
-      readOnlyRootFilesystem: false
-    env:
-    - name: KUBECONFIG
-      value: /kube/config
-    volumeMounts:
-    - name: kubeconfig-secret
-      mountPath: /kube/config
-      subPath: kubeconfig
-
-  - name: dind
-    image: docker:dind
-    securityContext:
-      privileged: true
-    env:
-    - name: DOCKER_TLS_CERTDIR
-      value: ""
-    volumeMounts:
-    - name: docker-config
-      mountPath: /etc/docker/daemon.json
-      subPath: daemon.json
-
-  volumes:
-  - name: docker-config
-    configMap:
-      name: docker-daemon-config
-  - name: kubeconfig-secret
-    secret:
-      secretName: kubeconfig-secret
-'''
+				apiVersion: v1
+				kind: Pod
+				spec:
+				  containers:
+				  - name: sonar-scanner
+				    image: sonarsource/sonar-scanner-cli
+				    command: ["cat"]
+				    tty: true
+				
+				  - name: kubectl
+				    image: bitnami/kubectl:latest
+				    command: ["cat"]
+				    tty: true
+				    securityContext:
+				      runAsUser: 0
+				      readOnlyRootFilesystem: false
+				    env:
+				    - name: KUBECONFIG
+				      value: /kube/config
+				    volumeMounts:
+				    - name: kubeconfig-secret
+				      mountPath: /kube/config
+				      subPath: kubeconfig
+				
+				  - name: dind
+				    image: docker:dind
+				    securityContext:
+				      privileged: true
+				    env:
+				    - name: DOCKER_TLS_CERTDIR
+				      value: ""
+				    volumeMounts:
+				    - name: docker-config
+				      mountPath: /etc/docker/daemon.json
+				      subPath: daemon.json
+				
+				  volumes:
+				  - name: docker-config
+				    configMap:
+				      name: docker-daemon-config
+				  - name: kubeconfig-secret
+				    secret:
+				      secretName: kubeconfig-secret
+			'''
         }
     }
 
@@ -151,6 +151,8 @@ spec:
                     dir('k8s-deployment') {
                         sh '''
                             kubectl apply -f deployment.yaml
+							kubectl apply -f service.yaml
+                    		kubectl apply -f ingress.yaml
                             kubectl rollout status deployment/$APP_NAME -n 2401121
                         '''
                     }
