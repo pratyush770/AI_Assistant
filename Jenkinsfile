@@ -81,7 +81,7 @@ spec:
             steps {
                 container('dind') {
                     sh '''
-			echo ".streamlit/secrets.toml" > .dockerignore
+						echo ".streamlit/secrets.toml" > .dockerignore
                         sleep 15
                         docker build -t $APP_NAME:$IMAGE_TAG .
                         docker images
