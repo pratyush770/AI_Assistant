@@ -8,6 +8,6 @@ spec:
     app: ai-assistant
   ports:
     - protocol: TCP
-      port: 8085
-      targetPort: 8085
+      port: 8501
+      targetPort: 8501
   type: ClusterIP
