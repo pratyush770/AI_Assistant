@@ -20,42 +20,18 @@ spec:
       labels:
         app: ai-assistant
     spec:
+      # Keep imagePullSecrets for Nexus
       imagePullSecrets:
         - name: nexus-secret  
 
       containers:
         - name: ai-assistant
           image: 127.0.0.1:30085/ai-assistant/ai-assistant:latest
-
           ports:
             - containerPort: 8501
 
+          # Removed all DB environment variables
           env:
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_USER
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_PASSWORD
-            - name: DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_NAME
-            - name: DB_HOST
-              valueFrom:
-                configMapKeyRef:
-                  name: db-config
-                  key: DB_HOST
-            - name: DB_PORT
-              valueFrom:
-                configMapKeyRef:
-                  name: db-config
-                  key: DB_PORT
             - name: DEBUG
               value: "0"
 
