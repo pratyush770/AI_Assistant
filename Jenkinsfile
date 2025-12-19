@@ -137,7 +137,7 @@ spec:
                     dir('k8s-deployment') {
                         sh '''
                             kubectl get namespace 2401121
-                            kubectl get svc -n 2401121
+                            kubectl get ingress -n 2401121
                         '''
                     }
                 }
