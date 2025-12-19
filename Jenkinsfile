@@ -52,7 +52,7 @@ pipeline {
     environment {
         APP_NAME        = "ai-assistant"
         IMAGE_TAG       = "latest"
-        REGISTRY_URL    = "nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
+        REGISTRY_URL    = "nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8087"
         REGISTRY_REPO   = "ai-assistant"
         SONAR_PROJECT   = "ai-assistant"
         SONAR_HOST_URL = "http://my-sonarqube-sonarqube.sonarqube.svc.cluster.local:9000"
@@ -118,7 +118,7 @@ pipeline {
                 container('dind') {
                     sh 'docker --version'
                     sh 'sleep 10'
-                    sh 'docker login nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085 -u admin -p Changeme@2025'
+                    sh 'docker login nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8087 -u admin -p Changeme@2025'
                 }
             }
         }
