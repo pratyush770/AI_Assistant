@@ -138,17 +138,17 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121
+                            # Delete the old deployment and pods
                             kubectl delete deployment ai-assistant-deployment -n 2401121
+                            
+                            # Re-apply the updated deployment.yaml
                             kubectl apply -f deployment.yaml
-                            kubectl get pods -n 2401121
-                            kubectl get pvc -n 2401121
-                            # Apply Kubernetes manifests
-                            // kubectl apply -f deployment.yaml
-                            // kubectl apply -f service.yaml
-                            // kubectl apply -f ingress.yaml
-
-                            # Wait for deployment rollout
+                            
+                            # Check rollout status
                             kubectl rollout status deployment/ai-assistant-deployment -n 2401121
+                            
+                            # Check pods
+                            kubectl get pods -n 2401121
                         '''
                     }
                 }
