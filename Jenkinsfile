@@ -2,50 +2,50 @@ pipeline {
     agent {
         kubernetes {
             yaml '''
-				apiVersion: v1
-				kind: Pod
-				spec:
-				  containers:
-				  - name: sonar-scanner
-				    image: sonarsource/sonar-scanner-cli
-				    command: ["cat"]
-				    tty: true
-				
-				  - name: kubectl
-				    image: bitnami/kubectl:latest
-				    command: ["cat"]
-				    tty: true
-				    securityContext:
-				      runAsUser: 0
-				      readOnlyRootFilesystem: false
-				    env:
-				    - name: KUBECONFIG
-				      value: /kube/config
-				    volumeMounts:
-				    - name: kubeconfig-secret
-				      mountPath: /kube/config
-				      subPath: kubeconfig
-				
-				  - name: dind
-				    image: docker:dind
-				    securityContext:
-				      privileged: true
-				    env:
-				    - name: DOCKER_TLS_CERTDIR
-				      value: ""
-				    volumeMounts:
-				    - name: docker-config
-				      mountPath: /etc/docker/daemon.json
-				      subPath: daemon.json
-				
-				  volumes:
-				  - name: docker-config
-				    configMap:
-				      name: docker-daemon-config
-				  - name: kubeconfig-secret
-				    secret:
-				      secretName: kubeconfig-secret
-			'''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: sonar-scanner
+    image: sonarsource/sonar-scanner-cli
+    command: ["cat"]
+    tty: true
+
+  - name: kubectl
+    image: bitnami/kubectl:latest
+    command: ["cat"]
+    tty: true
+    securityContext:
+      runAsUser: 0
+      readOnlyRootFilesystem: false
+    env:
+    - name: KUBECONFIG
+      value: /kube/config
+    volumeMounts:
+    - name: kubeconfig-secret
+      mountPath: /kube/config
+      subPath: kubeconfig
+
+  - name: dind
+    image: docker:dind
+    securityContext:
+      privileged: true
+    env:
+    - name: DOCKER_TLS_CERTDIR
+      value: ""
+    volumeMounts:
+    - name: docker-config
+      mountPath: /etc/docker/daemon.json
+      subPath: daemon.json
+
+  volumes:
+  - name: docker-config
+    configMap:
+      name: docker-daemon-config
+  - name: kubeconfig-secret
+    secret:
+      secretName: kubeconfig-secret
+'''
         }
     }
 
@@ -61,21 +61,21 @@ pipeline {
     stages {
 
         stage('Provide Streamlit Secrets') {
-    		steps {
-        		withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
-            		sh '''
-            			mkdir -p .streamlit
-            			cp "$SECRET_FILE" .streamlit/secrets.toml
-            		'''
-        	}
-    	    }
-	}
+            steps {
+                withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
+                    sh '''
+                        mkdir -p .streamlit
+                        cp "$SECRET_FILE" .streamlit/secrets.toml
+                    '''
+                }
+            }
+        }
 
         stage('Build Docker Image') {
             steps {
                 container('dind') {
                     sh '''
-						echo ".streamlit/secrets.toml" > .dockerignore
+                        echo ".streamlit/secrets.toml" > .dockerignore
                         sleep 15
                         docker build -t $APP_NAME:$IMAGE_TAG .
                         docker images
@@ -99,12 +99,12 @@ pipeline {
             steps {
                 container('sonar-scanner') {
                     withCredentials([
-					    usernamePassword(
-					        credentialsId: 'sonar-token-2401121',
-					        usernameVariable: 'SONAR_USER',
-					        passwordVariable: 'SONAR_TOKEN'
-					    )
-					]) {
+                        usernamePassword(
+                            credentialsId: 'sonar-token-2401121',
+                            usernameVariable: 'SONAR_USER',
+                            passwordVariable: 'SONAR_TOKEN'
+                        )
+                    ]) {
                         sh '''
                             sonar-scanner \
                               -Dsonar.projectKey=$SONAR_PROJECT \
@@ -117,7 +117,7 @@ pipeline {
             }
         }
 
-       stage('Login to Docker Registry') {
+        stage('Login to Docker Registry') {
             steps {
                 container('dind') {
                     sh 'docker --version'
@@ -126,7 +126,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Build - Tag - Push Image') {
             steps {
@@ -149,8 +148,8 @@ pipeline {
                     dir('k8s-deployment') {
                         sh '''
                             kubectl apply -f deployment.yaml
-							kubectl apply -f service.yaml
-                    		kubectl apply -f ingress.yaml
+                            kubectl apply -f service.yaml
+                            kubectl apply -f ingress.yaml
                             kubectl rollout status deployment/$APP_NAME -n 2401121
                         '''
                     }
@@ -159,5 +158,3 @@ pipeline {
         }
     }
 }
-
-
