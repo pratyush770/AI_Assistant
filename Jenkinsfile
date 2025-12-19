@@ -99,8 +99,12 @@ pipeline {
             steps {
                 container('sonar-scanner') {
                     withCredentials([
-                        string(credentialsId: 'SONAR_TOKEN_ID', variable: 'SONAR_TOKEN')
-                    ]) {
+					    usernamePassword(
+					        credentialsId: 'sonar-token-2401121',
+					        usernameVariable: 'SONAR_USER',
+					        passwordVariable: 'SONAR_TOKEN'
+					    )
+					]) {
                         sh '''
                             sonar-scanner \
                               -Dsonar.projectKey=$SONAR_PROJECT \
