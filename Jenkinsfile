@@ -60,76 +60,76 @@ spec:
 
     stages {
 
-        stage('Provide Streamlit Secrets') {
-            steps {
-                withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
-                    sh '''
-                        mkdir -p .streamlit
-                        cp "$SECRET_FILE" .streamlit/secrets.toml
-                    '''
-                }
-            }
-        }
+        // stage('Provide Streamlit Secrets') {
+        //     steps {
+        //         withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
+        //             sh '''
+        //                 mkdir -p .streamlit
+        //                 cp "$SECRET_FILE" .streamlit/secrets.toml
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('Build Docker Image') {
-            steps {
-                container('dind') {
-                    sh '''
-                        echo ".streamlit/secrets.toml" > .dockerignore
-                        sleep 15
-                        docker build -t $APP_NAME:$IMAGE_TAG .
-                        docker images
-                    '''
-                }
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         container('dind') {
+        //             sh '''
+        //                 echo ".streamlit/secrets.toml" > .dockerignore
+        //                 sleep 15
+        //                 docker build -t $APP_NAME:$IMAGE_TAG .
+        //                 docker images
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('SonarQube Analysis') {
-            steps {
-                container('sonar-scanner') {
-                    withCredentials([
-                        usernamePassword(
-                            credentialsId: 'sonar-token-2401121',
-                            usernameVariable: 'SONAR_USER',
-                            passwordVariable: 'SONAR_TOKEN'
-                        )
-                    ]) {
-                        sh '''
-                            sonar-scanner \
-                              -Dsonar.projectKey=$SONAR_PROJECT \
-                              -Dsonar.host.url=$SONAR_HOST_URL \
-                              -Dsonar.login=$SONAR_TOKEN \
-                              -Dsonar.python.coverage.reportPaths=coverage.xml
-                        '''
-                    }
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         container('sonar-scanner') {
+        //             withCredentials([
+        //                 usernamePassword(
+        //                     credentialsId: 'sonar-token-2401121',
+        //                     usernameVariable: 'SONAR_USER',
+        //                     passwordVariable: 'SONAR_TOKEN'
+        //                 )
+        //             ]) {
+        //                 sh '''
+        //                     sonar-scanner \
+        //                       -Dsonar.projectKey=$SONAR_PROJECT \
+        //                       -Dsonar.host.url=$SONAR_HOST_URL \
+        //                       -Dsonar.login=$SONAR_TOKEN \
+        //                       -Dsonar.python.coverage.reportPaths=coverage.xml
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Login to Docker Registry') {
-            steps {
-                container('dind') {
-                    sh 'docker --version'
-                    sh 'sleep 10'
-                    sh 'docker login nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085 -u admin -p Changeme@2025'
-                }
-            }
-        }
+        // stage('Login to Docker Registry') {
+        //     steps {
+        //         container('dind') {
+        //             sh 'docker --version'
+        //             sh 'sleep 10'
+        //             sh 'docker login nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085 -u admin -p Changeme@2025'
+        //         }
+        //     }
+        // }
 
-        stage('Build - Tag - Push Image') {
-            steps {
-                container('dind') {
-                    sh '''
-                        docker tag $APP_NAME:$IMAGE_TAG \
-                          $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
+        // stage('Build - Tag - Push Image') {
+        //     steps {
+        //         container('dind') {
+        //             sh '''
+        //                 docker tag $APP_NAME:$IMAGE_TAG \
+        //                   $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
         
-                        docker push $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
-                        docker pull $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
-                        docker images
-                    '''
-                }
-            }
-        }
+        //                 docker push $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
+        //                 docker pull $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
+        //                 docker images
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Deploy Application') {
             steps {
