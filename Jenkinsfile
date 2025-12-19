@@ -138,8 +138,9 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121 || kubectl create namespace 2401121
-                            kubectl logs ai-assistant-deployment-7c9568f6c6-7zqmd -n 2401121 --previous
-
+                            kubectl delete deployment ai-assistant-deployment -n 2401121 --ignore-not-found
+                            kubectl delete rs -n 2401121 --selector=app=ai-assistant --ignore-not-found
+                            kubectl delete pod -n 2401121 --selector=app=ai-assistant --ignore-not-found
                         '''
                     }
                 }
