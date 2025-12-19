@@ -60,12 +60,6 @@ pipeline {
 
     stages {
 
-	stage('Checkout Code') {
-            steps {
-                git branch: 'master', url: 'https://github.com/pratyush770/AI_Assistant.git'
-            }
-        }
-
         stage('Provide Streamlit Secrets') {
     		steps {
         		withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
