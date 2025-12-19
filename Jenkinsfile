@@ -138,20 +138,8 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121 || kubectl create namespace 2401121
-                            kubectl delete secret nexus-secret -n 2401121
-                            kubectl create secret docker-registry nexus-secret \
-                              --docker-server=127.0.0.1:30085 \
-                              --docker-username=admin \
-                              --docker-password=Changeme@2025 \
-                              -n 2401121
-                            kubectl delete deployment ai-assistant-deployment -n 2401121 --ignore-not-found
-                            kubectl delete rs -n 2401121 --selector=app=ai-assistant --ignore-not-found
-                            kubectl delete pod -n 2401121 --selector=app=ai-assistant --ignore-not-found
-                            # Apply updated deployment, service, and ingress
-                            kubectl apply -f deployment.yaml -n 2401121
-                            kubectl apply -f service.yaml -n 2401121
-                            kubectl apply -f ingress.yaml -n 2401121
                             kubectl get pods -n 2401121
+                            kubectl describe pod ai-assistant-deployment-5cf645f5f8-t9vh7 -n 2401121
                         '''
                     }
                 }
