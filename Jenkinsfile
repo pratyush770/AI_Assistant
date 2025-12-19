@@ -120,16 +120,32 @@ spec:
         //     }
         // }
 
-        stage('Create Streamlit Secret in Kubernetes') {
+        stage('Create Streamlit Secrets in Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
+                withCredentials([
+                    file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE'),
+                    file(credentialsId: 'streamlit-config', variable: 'CONFIG_FILE')
+                ]) {
                     container('kubectl') {
                         sh '''
+                            # Temporary directory for secret files
                             mkdir -p /tmp/streamlit-secret
+        
+                            # Copy Jenkins credential files
                             cp "$SECRET_FILE" /tmp/streamlit-secret/secrets.toml
+                            cp "$CONFIG_FILE" /tmp/streamlit-secret/config.toml
+        
+                            # Delete existing secrets if they exist
                             kubectl delete secret streamlit-secrets -n 2401121 --ignore-not-found
+                            kubectl delete secret streamlit-config -n 2401121 --ignore-not-found
+        
+                            # Create Kubernetes secrets from the files
                             kubectl create secret generic streamlit-secrets \
                                 --from-file=secrets.toml=/tmp/streamlit-secret/secrets.toml \
+                                -n 2401121
+        
+                            kubectl create secret generic streamlit-config \
+                                --from-file=config.toml=/tmp/streamlit-secret/config.toml \
                                 -n 2401121
                         '''
                     }
@@ -137,13 +153,13 @@ spec:
             }
         }
 
+
        stage('Deploy Application') {
             steps {
                 container('kubectl') {
                     dir('k8s-deployment') {
                         sh '''
                             kubectl get namespace 2401121
-                            kubectl get secret streamlit-secrets -n 2401121
                             kubectl apply -f deployment.yaml -n 2401121
 
                         '''
