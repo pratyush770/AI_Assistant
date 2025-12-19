@@ -21,29 +21,6 @@ spec:
       imagePullSecrets:
         - name: nexus-secret
 
-     apiVersion: v1
-kind: Namespace
-metadata:
-  name: "2401121"
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: ai-assistant-deployment
-  namespace: "2401121"
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: ai-assistant
-  template:
-    metadata:
-      labels:
-        app: ai-assistant
-    spec:
-      imagePullSecrets:
-        - name: nexus-secret
-
       containers:
         - name: ai-assistant
           image: 127.0.0.1:30085/ai-assistant/ai-assistant:latest
@@ -75,7 +52,7 @@ spec:
             - name: streamlit-secrets
               mountPath: /app/.streamlit/secrets.toml
               subPath: secrets.toml
-            - name: streamlit-secrets
+            - name: streamlit-config
               mountPath: /app/.streamlit/config.toml
               subPath: config.toml
 
@@ -93,3 +70,6 @@ spec:
         - name: streamlit-secrets
           secret:
             secretName: streamlit-secrets
+        - name: streamlit-config
+          secret:
+            secretName: streamlit-config
