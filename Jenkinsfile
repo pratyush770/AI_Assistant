@@ -53,7 +53,7 @@ spec:
         APP_NAME        = "ai-assistant"
         IMAGE_TAG       = "latest"
         REGISTRY_URL    = "nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
-        REGISTRY_REPO   = "my-repository/v2"
+        REGISTRY_REPO   = "ai-assistant"
         SONAR_PROJECT   = "ai-assistant"
         SONAR_HOST_URL = "http://my-sonarqube-sonarqube.sonarqube.svc.cluster.local:9000"
     }
