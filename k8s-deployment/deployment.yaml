@@ -35,14 +35,14 @@ spec:
 
           readinessProbe:
             httpGet:
-              path: /health
+              path: /
               port: 8501
             initialDelaySeconds: 10
             periodSeconds: 10
 
           livenessProbe:
             httpGet:
-              path: /health
+              path: /
               port: 8501
             initialDelaySeconds: 30
             periodSeconds: 30
