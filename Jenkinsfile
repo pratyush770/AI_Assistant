@@ -140,6 +140,9 @@ spec:
                             kubectl create secret generic streamlit-secrets \
                               --from-file=secrets.toml=secrets.toml \
                               -n 2401121
+                            kubectl get secret streamlit-secrets -n 2401121
+                            kubectl apply -f deployment.yaml -n 2401121
+
                         '''
                     }
                 }
