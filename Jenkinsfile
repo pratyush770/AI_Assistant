@@ -138,14 +138,14 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121
-
+                            kubectl get pods -n 2401121
                             # Apply Kubernetes manifests
-                            kubectl apply -f deployment.yaml
-                            kubectl apply -f service.yaml
-                            kubectl apply -f ingress.yaml
+                            // kubectl apply -f deployment.yaml
+                            // kubectl apply -f service.yaml
+                            // kubectl apply -f ingress.yaml
 
                             # Wait for deployment rollout
-                            kubectl rollout status deployment/ai-assistant-deployment -n 2401121
+                            // kubectl rollout status deployment/ai-assistant-deployment -n 2401121
                         '''
                     }
                 }
