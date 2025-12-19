@@ -60,17 +60,6 @@ spec:
 
     stages {
 
-        // stage('Provide Streamlit Secrets') {
-        //     steps {
-        //         withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
-        //             sh '''
-        //                 mkdir -p .streamlit
-        //                 cp "$SECRET_FILE" .streamlit/secrets.toml
-        //             '''
-        //         }
-        //     }
-        // }
-
         // stage('Build Docker Image') {
         //     steps {
         //         container('dind') {
@@ -131,15 +120,29 @@ spec:
         //     }
         // }
 
+        stage('Create Streamlit Secret in Kubernetes') {
+            steps {
+                withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
+                    container('kubectl') {
+                        sh '''
+                            mkdir -p /tmp/streamlit-secret
+                            cp "$SECRET_FILE" /tmp/streamlit-secret/secrets.toml
+                            kubectl delete secret streamlit-secrets -n 2401121 --ignore-not-found
+                            kubectl create secret generic streamlit-secrets \
+                                --from-file=secrets.toml=/tmp/streamlit-secret/secrets.toml \
+                                -n 2401121
+                        '''
+                    }
+                }
+            }
+        }
+
        stage('Deploy Application') {
             steps {
                 container('kubectl') {
                     dir('k8s-deployment') {
                         sh '''
                             kubectl get namespace 2401121
-                            kubectl create secret generic streamlit-secrets \
-                              --from-file=secrets.toml=secrets.toml \
-                              -n 2401121
                             kubectl get secret streamlit-secrets -n 2401121
                             kubectl apply -f deployment.yaml -n 2401121
 
