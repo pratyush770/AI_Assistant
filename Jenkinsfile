@@ -138,16 +138,17 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121
+                            kubectl describe pod ai-assistant-deployment-585dfb7549-s9fwgkubectl -n 2401121 
                             # Delete the old deployment and pods
-                            kubectl delete deployment ai-assistant-deployment -n 2401121
+                            
                             
                             # Re-apply the updated deployment.yaml
-                            kubectl apply -f deployment.yaml
+                           
                             
                             # Check rollout status
                             
                             # Check pods
-                            kubectl get pods -n 2401121
+                            
                         '''
                     }
                 }
