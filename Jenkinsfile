@@ -138,8 +138,8 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121 || kubectl create namespace 2401121
-                            kubectl apply -f deployment.yaml -n 2401121
                             kubectl get pods -n 2401121
+                            kubectl describe pod ai-assistant-deployment-7c9568f6c6-7zqmd -n 2401121
                         '''
                     }
                 }
