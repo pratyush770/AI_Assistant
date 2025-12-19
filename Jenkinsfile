@@ -137,18 +137,23 @@ spec:
                     dir('k8s-deployment') {
                         sh '''
                             # Ensure namespace exists
-                            kubectl get namespace 2401121
-                            kubectl describe pod ai-assistant-deployment-585dfb7549-s9fwgkubectl -n 2401121 
-                            # Delete the old deployment and pods
-                            
-                            
-                            # Re-apply the updated deployment.yaml
-                           
-                            
-                            # Check rollout status
-                            
-                            # Check pods
-                            
+                            kubectl get namespace 2401121 
+        
+                            # Delete old deployment and associated ReplicaSets & Pods
+                            kubectl delete deployment ai-assistant-deployment -n 2401121 --ignore-not-found
+                            kubectl delete rs -n 2401121 --selector=app=ai-assistant --ignore-not-found
+                            kubectl delete pod -n 2401121 --selector=app=ai-assistant --ignore-not-found
+        
+                            # Apply updated deployment, service, and ingress
+                            kubectl apply -f deployment.yaml -n 2401121
+                            kubectl apply -f service.yaml -n 2401121
+                            kubectl apply -f ingress.yaml -n 2401121
+        
+                            # Wait for rollout to finish
+                            kubectl rollout status deployment/ai-assistant-deployment -n 2401121
+        
+                            # List pods and their status
+                            kubectl get pods -n 2401121
                         '''
                     }
                 }
