@@ -138,7 +138,9 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121
-                            kubectl describe pod ai-assistant-deployment-856b6c995-ps6fs -n 2401121
+                            kubectl delete deployment ai-assistant-deployment -n 2401121
+                            kubectl apply -f deployment.yaml
+                            kubectl get pods -n 2401121
                             kubectl get pvc -n 2401121
                             # Apply Kubernetes manifests
                             // kubectl apply -f deployment.yaml
