@@ -138,7 +138,15 @@ spec:
                         sh '''
                             # Ensure namespace exists
                             kubectl get namespace 2401121 
-                            kubectl describe pod ai-assistant-deployment-76c5b947d7-v2dql --namespace 2401121
+                            kubectl create secret docker-registry nexus-secret \
+                            --docker-server=nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085 \
+                            --docker-username=admin \
+                            --docker-password=Changeme@2025 \
+                            -n 2401121
+                            kubectl get secret nexus-secret -n 2401121
+                            kubectl describe secret nexus-secret -n 2401121
+
+
                         '''
                     }
                 }
