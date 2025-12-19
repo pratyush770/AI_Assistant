@@ -137,7 +137,7 @@ spec:
                     dir('k8s-deployment') {
                         sh '''
                             # Ensure namespace exists
-                            kubectl get namespace 2401121 
+                            kubectl get namespace 2401121 || kubectl create namespace 2401121
         
                             # Delete old deployment and associated ReplicaSets & Pods
                             kubectl delete deployment ai-assistant-deployment -n 2401121 --ignore-not-found
