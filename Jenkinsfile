@@ -136,8 +136,13 @@ spec:
                 container('kubectl') {
                     dir('k8s-deployment') {
                         sh '''
-                            kubectl get namespace 2401121
-                            kubectl logs ai-assistant-deployment-6dc4fc6d4-8bt9n -n 2401121
+                            # Ensure namespace exists
+                            kubectl get namespace 2401121 
+        
+                            # Delete old deployment and associated ReplicaSets & Pods
+                            kubectl delete deployment ai-assistant-deployment -n 2401121 --ignore-not-found
+                            kubectl delete rs -n 2401121 --selector=app=ai-assistant --ignore-not-found
+                            kubectl delete pod -n 2401121 --selector=app=ai-assistant --ignore-not-found
                         '''
                     }
                 }
