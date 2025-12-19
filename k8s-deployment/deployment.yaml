@@ -25,7 +25,7 @@ spec:
 
       containers:
         - name: ai-assistant
-          image: nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085/ai-assistant/ai-assistant:latest
+          image: 127.0.0.1:30085/ai-assistant/ai-assistant:latest
 
           ports:
             - containerPort: 8501
