@@ -137,7 +137,7 @@ spec:
                     dir('k8s-deployment') {
                         sh '''
                             kubectl get namespace 2401121
-                            kubectl describe pod ai-assistant-deployment-6dc4fc6d4-8bt9n -n 2401121
+                            kubectl logs ai-assistant-deployment-6dc4fc6d4-8bt9n -n 2401121
                         '''
                     }
                 }
