@@ -47,14 +47,13 @@ spec:
             periodSeconds: 30
 
           volumeMounts:
-            - name: app-storage
-              mountPath: /app/data
             - name: streamlit-secrets
-              mountPath: /app/.streamlit/secrets.toml
+              mountPath: /root/.streamlit/secrets.toml
               subPath: secrets.toml
             - name: streamlit-config
-              mountPath: /app/.streamlit/config.toml
+              mountPath: /root/.streamlit/config.toml
               subPath: config.toml
+
 
           resources:
             requests:
