@@ -145,7 +145,7 @@ spec:
                             kubectl apply -f ingress.yaml
 
                             # Wait for deployment rollout
-                            kubectl rollout status deployment/$APP_NAME -n 2401121
+                            kubectl rollout status deployment/ai-assistant-deployment -n 2401121
                         '''
                     }
                 }
