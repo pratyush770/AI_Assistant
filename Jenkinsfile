@@ -55,90 +55,96 @@ spec:
         REGISTRY_URL    = "nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085"
         REGISTRY_REPO   = "ai-assistant"
         SONAR_PROJECT   = "ai-assistant"
-        SONAR_HOST_URL = "http://my-sonarqube-sonarqube.sonarqube.svc.cluster.local:9000"
+        SONAR_HOST_URL  = "http://my-sonarqube-sonarqube.sonarqube.svc.cluster.local:9000"
     }
 
     stages {
 
-        stage('Provide Streamlit Secrets') {
-            steps {
-                withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
-                    sh '''
-                        mkdir -p .streamlit
-                        cp "$SECRET_FILE" .streamlit/secrets.toml
-                    '''
-                }
-            }
-        }
+        // stage('Provide Streamlit Secrets') {
+        //     steps {
+        //         withCredentials([file(credentialsId: 'streamlit-secrets', variable: 'SECRET_FILE')]) {
+        //             sh '''
+        //                 mkdir -p .streamlit
+        //                 cp "$SECRET_FILE" .streamlit/secrets.toml
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('Build Docker Image') {
-            steps {
-                container('dind') {
-                    sh '''
-                        echo ".streamlit/secrets.toml" > .dockerignore
-                        sleep 15
-                        docker build -t $APP_NAME:$IMAGE_TAG .
-                        docker images
-                    '''
-                }
-            }
-        }
-    
-        stage('SonarQube Analysis') {
-            steps {
-                container('sonar-scanner') {
-                    withCredentials([
-                        usernamePassword(
-                            credentialsId: 'sonar-token-2401121',
-                            usernameVariable: 'SONAR_USER',
-                            passwordVariable: 'SONAR_TOKEN'
-                        )
-                    ]) {
-                        sh '''
-                            sonar-scanner \
-                              -Dsonar.projectKey=$SONAR_PROJECT \
-                              -Dsonar.host.url=$SONAR_HOST_URL \
-                              -Dsonar.login=$SONAR_TOKEN \
-                              -Dsonar.python.coverage.reportPaths=coverage.xml
-                        '''
-                    }
-                }
-            }
-        }
+        // stage('Build Docker Image') {
+        //     steps {
+        //         container('dind') {
+        //             sh '''
+        //                 echo ".streamlit/secrets.toml" > .dockerignore
+        //                 sleep 15
+        //                 docker build -t $APP_NAME:$IMAGE_TAG .
+        //                 docker images
+        //             '''
+        //         }
+        //     }
+        // }
 
-        stage('Login to Docker Registry') {
-            steps {
-                container('dind') {
-                    sh 'docker --version'
-                    sh 'sleep 10'
-                    sh 'docker login nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085 -u admin -p Changeme@2025'
-                }
-            }
-        }
+        // stage('SonarQube Analysis') {
+        //     steps {
+        //         container('sonar-scanner') {
+        //             withCredentials([
+        //                 usernamePassword(
+        //                     credentialsId: 'sonar-token-2401121',
+        //                     usernameVariable: 'SONAR_USER',
+        //                     passwordVariable: 'SONAR_TOKEN'
+        //                 )
+        //             ]) {
+        //                 sh '''
+        //                     sonar-scanner \
+        //                       -Dsonar.projectKey=$SONAR_PROJECT \
+        //                       -Dsonar.host.url=$SONAR_HOST_URL \
+        //                       -Dsonar.login=$SONAR_TOKEN \
+        //                       -Dsonar.python.coverage.reportPaths=coverage.xml
+        //                 '''
+        //             }
+        //         }
+        //     }
+        // }
 
-        stage('Build - Tag - Push Image') {
-            steps {
-                container('dind') {
-                    sh '''
-                        docker tag $APP_NAME:$IMAGE_TAG \
-                          $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
+        // stage('Login to Docker Registry') {
+        //     steps {
+        //         container('dind') {
+        //             sh 'docker --version'
+        //             sh 'sleep 10'
+        //             sh 'docker login nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085 -u admin -p Changeme@2025'
+        //         }
+        //     }
+        // }
 
-                        docker push $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
-                        docker pull $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
-                        docker images
-                    '''
-                }
-            }
-        }
+        // stage('Build - Tag - Push Image') {
+        //     steps {
+        //         container('dind') {
+        //             sh '''
+        //                 docker tag $APP_NAME:$IMAGE_TAG \
+        //                   $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
+        //
+        //                 docker push $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
+        //                 docker pull $REGISTRY_URL/$REGISTRY_REPO/$APP_NAME:$IMAGE_TAG
+        //                 docker images
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Deploy Application') {
             steps {
                 container('kubectl') {
                     dir('k8s-deployment') {
                         sh '''
+                            # Ensure namespace exists
+                            kubectl get namespace 2401121
+
+                            # Apply Kubernetes manifests
                             kubectl apply -f deployment.yaml
                             kubectl apply -f service.yaml
                             kubectl apply -f ingress.yaml
+
+                            # Wait for deployment rollout
                             kubectl rollout status deployment/$APP_NAME -n 2401121
                         '''
                     }
