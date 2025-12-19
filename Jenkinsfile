@@ -145,7 +145,6 @@ spec:
                             kubectl apply -f deployment.yaml
                             
                             # Check rollout status
-                            kubectl rollout status deployment/ai-assistant-deployment -n 2401121
                             
                             # Check pods
                             kubectl get pods -n 2401121
