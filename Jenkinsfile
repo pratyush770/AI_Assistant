@@ -137,16 +137,20 @@ spec:
                     dir('k8s-deployment') {
                         sh '''
                             # Ensure namespace exists
-                            kubectl get namespace 2401121 
-                            kubectl create secret docker-registry nexus-secret \
-                            --docker-server=nexus-service-for-docker-hosted-registry.nexus.svc.cluster.local:8085 \
-                            --docker-username=admin \
-                            --docker-password=Changeme@2025 \
-                            -n 2401121
-                            kubectl get secret nexus-secret -n 2401121
-                            kubectl describe secret nexus-secret -n 2401121
-
-
+                            kubectl get namespace 2401121 || kubectl create namespace 2401121
+        
+                            # Delete old deployment and associated ReplicaSets & Pods
+                            kubectl delete deployment ai-assistant-deployment -n 2401121 --ignore-not-found
+                            kubectl delete rs -n 2401121 --selector=app=ai-assistant --ignore-not-found
+                            kubectl delete pod -n 2401121 --selector=app=ai-assistant --ignore-not-found
+        
+                            # Apply updated deployment, service, and ingress
+                            kubectl apply -f deployment.yaml -n 2401121
+                            kubectl apply -f service.yaml -n 2401121
+                            kubectl apply -f ingress.yaml -n 2401121
+        
+                            # List pods and their status
+                            kubectl get pods -n 2401121
                         '''
                     }
                 }
