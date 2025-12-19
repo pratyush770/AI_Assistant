@@ -136,10 +136,8 @@ spec:
                 container('kubectl') {
                     dir('k8s-deployment') {
                         sh '''
-                            kubectl apply -f deployment.yaml -n 2401121
-                            kubectl apply -f service.yaml -n 2401121
-                            kubectl apply -f ingress.yaml -n 2401121
-                            kubectl rollout status deployment/ai-assistant-deployment -n 2401121
+                            kubectl get namespace 2401121
+                            kubectl get pods -n 2401121
                         '''
                     }
                 }
